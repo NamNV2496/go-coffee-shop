@@ -16,6 +16,7 @@
         5. kafka - "github.com/IBM/sarama"
         6. minio - "github.com/minio/minio-go"
         7. gorp_migration - "github.com/rubenv/sql-migrate"
+        8. goqu - "github.com/doug-martin/goqu/v9"
 
 # 3. Flow
 
