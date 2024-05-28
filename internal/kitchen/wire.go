@@ -1,0 +1,27 @@
+//go:build wireinject
+
+package kitchen
+
+import (
+	"github.com/google/wire"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/cache"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/configs"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen/app"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen/handler"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen/service"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/mq"
+	"google.golang.org/grpc"
+)
+
+func Initialize(grpc *grpc.Server, filePath configs.ConfigFilePath) (*app.App, func(), error) {
+
+	wire.Build(
+		configs.ConfigWireSet,
+		mq.MQWireSet,
+		cache.CacheWireSet,
+		handler.HandlerWireSet,
+		service.ServiceWireSet,
+		app.NewApp,
+	)
+	return nil, nil, nil
+}

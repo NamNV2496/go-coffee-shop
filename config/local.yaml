@@ -1,0 +1,30 @@
+database:
+  host: 127.0.0.1
+  port: 3309
+  username: root
+  password: root
+  database: coffee
+grpc:
+  address: "0.0.0.0:5600"
+  type: tcp
+kafka:
+  addresses:
+    - localhost:29092
+  client_id: "sit"
+redis:
+  address: "127.0.0.1:6379"
+  username: ""
+  password: ""
+  databse: 0
+cron:
+  clear_all_order:
+    # schedule: "@every 24h"
+    # schedule: "1 * * * *"
+    hour: 14
+    minute: 13
+
+s3:
+  mode: s3
+  address: "127.0.0.1:9000"
+  username: "ROOTUSER"
+  password: "CHANGEME123"

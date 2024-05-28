@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package grpc;
+
+import "google/api/annotations.proto";
+// import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "grpc/grpcpb";
+
+message GetProductsRequest {
+	int32 Id = 1;
+	string Name = 2;
+	int32 page = 3;
+	int32 size = 4;
+}
+
+
+message GetProductsResponse {
+	repeated Item items = 1;
+}
+
+message Item {
+  	int32 Id = 1;
+	string Name = 2;
+	int32 Price = 3;
+	int32 Type = 4;
+}
+
+
+service ProductService {
+
+    rpc GetProducts(GetProductsRequest) returns (GetProductsResponse) {
+		option (google.api.http) = {
+			get: "/v1/api/products"
+		};
+		// option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+		// 	summary: "List item by id or by name"
+		// 	description: "List item by id or by name"
+		// 	tags: "Products"
+		// };
+	}
+}
