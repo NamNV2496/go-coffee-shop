@@ -159,3 +159,15 @@ if err != nil {
 gorp_migrations to save sql file. Check changelog and build if the file is changed (like liquibase in Java spring boot)
 
 ![gorp_migrations](docs/migrateDB.png)
+
+# 7. Dockerfile
+
+locate in `root` dictory
+
+```bash
+docker build -t counter-service -f cmd/counter/Dockerfile .
+
+docker build -t kitchen-service -f cmd/kitchen/Dockerfile .
+
+docker build -t product-service -f cmd/product/Dockerfile .
+```
