@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -126,10 +127,13 @@ func (app App) CreateOrder(ctx context.Context, req *gin.Context) {
 		panic(fmt.Sprintf("Insert fail: %v", err))
 	}
 	// trigger to kitchen
-	// var data = "testdata"
-	// go func() {
-	// 	app.Producer.Produce(context.Background(), mq.TOPIC_PROCESS_COOK, []byte(data))
-	// }()
+	data, err := json.Marshal(orderList)
+	if err != nil {
+		fmt.Println("Error marshall data to send to kitchen")
+	}
+	go func() {
+		app.Producer.Produce(context.Background(), mq.TOPIC_PROCESS_COOK, data)
+	}()
 	req.JSON(http.StatusCreated, gin.H{"message": err})
 }
 
@@ -145,10 +149,6 @@ func (app App) SubmitOrder(ctx context.Context, req *gin.Context) {
 	if err != nil {
 		panic(fmt.Sprintf("Insert fail: %v", err))
 	}
-	// var data = "testdata"
-	// go func() {
-	// 	app.Producer.Produce(context.Background(), mq.TOPIC_PROCESS_COOK, []byte(data))
-	// }()
 	req.JSON(http.StatusCreated, gin.H{"message": id})
 }
 

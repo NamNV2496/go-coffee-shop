@@ -19,7 +19,7 @@
 
 # 3. Flow
 
-![alt text](flow.png)
+![alt text](docs/flow.png)
 
 # 4. APIS
 
