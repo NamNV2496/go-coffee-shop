@@ -23,7 +23,7 @@ type AppInterface interface {
 	Start(ctx context.Context) error
 	CreateOrder(ctx context.Context, req *gin.Context)
 	SubmitOrder(ctx context.Context, req *gin.Context)
-	UpdateOrderStatus(ctx context.Context, req *gin.Context)
+	// UpdateOrderStatus(ctx context.Context, req *gin.Context)
 	GetItem(ctx context.Context, req *gin.Context)
 	GetOrders(ctx context.Context, req *gin.Context)
 }
@@ -100,18 +100,18 @@ func (app App) startScheduler() error {
 	return nil
 }
 
-func (app App) UpdateOrderStatus(ctx context.Context, req *gin.Context) {
-	orderId, err := strconv.Atoi(req.Query("orderId"))
-	if err != nil {
-		orderId = 0
-	}
-	status, err := strconv.Atoi(req.Query("status"))
-	if err != nil || status != int(mq.Canceled) {
-		panic("Status is invalide")
-	}
-	app.OrderService.UpdateStatusOrder(context.Background(), int32(orderId), int32(status))
-	req.JSON(http.StatusCreated, gin.H{"message": "Thành công"})
-}
+// func (app App) UpdateOrderStatus(ctx context.Context, req *gin.Context) {
+// 	orderId, err := strconv.Atoi(req.Query("orderId"))
+// 	if err != nil {
+// 		orderId = 0
+// 	}
+// 	status, err := strconv.Atoi(req.Query("status"))
+// 	if err != nil || status != int(mq.Canceled) {
+// 		panic("Status is invalide")
+// 	}
+// 	app.OrderService.UpdateStatusOrder(context.Background(), int32(orderId), int32(status))
+// 	req.JSON(http.StatusCreated, gin.H{"message": "Thành công"})
+// }
 
 func (app App) CreateOrder(ctx context.Context, req *gin.Context) {
 
@@ -132,20 +132,19 @@ func (app App) CreateOrder(ctx context.Context, req *gin.Context) {
 		fmt.Println("Error marshall data to send to kitchen")
 	}
 	go func() {
+		fmt.Println("Call trigger to kitchen: ", data)
 		app.Producer.Produce(context.Background(), mq.TOPIC_PROCESS_COOK, data)
 	}()
 	req.JSON(http.StatusCreated, gin.H{"message": err})
 }
 
 func (app App) SubmitOrder(ctx context.Context, req *gin.Context) {
-	var orderList domain.OrderItemListDto
-
-	if err := req.BindJSON(&orderList); err != nil {
-		req.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
+	queryId := req.Query("customerId")
+	customerId, err := strconv.Atoi(queryId)
+	if err != nil {
+		panic(fmt.Sprintf("Insert fail: %v", err))
 	}
-
-	id, err := app.OrderService.SubmitOrder(context.Background(), orderList.CustomerId)
+	id, err := app.OrderService.SubmitOrder(context.Background(), int32(customerId))
 	if err != nil {
 		panic(fmt.Sprintf("Insert fail: %v", err))
 	}
@@ -156,10 +155,7 @@ func (app App) GetItem(ctx context.Context, req *gin.Context) {
 	// get from parameters
 	id := req.Query("id")
 	name := req.Query("name")
-	num, err := strconv.Atoi(id)
-	if err != nil {
-		panic("Input fail")
-	}
+	num, _ := strconv.Atoi(id)
 	items, err := app.GrpcClient.GetProductByIdOrName(int32(num), name)
 	if err != nil {
 		panic("get items fail")

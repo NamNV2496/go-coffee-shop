@@ -22,7 +22,38 @@
 
 ![alt text](docs/flow.png)
 
-# 4. APIS
+
+# 4. How's it work
+
+## Please import `coffee-project.postman_collection.json` to your postman and run it
+
+### [Counter] View all items
+![alt text](docs/2.png)
+### [Counter] View item by id or by name
+![alt text](docs/3.png)
+### [Counter] Create new order status == 1 (processing)
+![alt text](docs/1.png)
+### [Kitchen] view order by customerId to cook
+![alt text](docs/4.png)
+### [Kitchen] view all orders
+![alt text](docs/5.png)
+### [Kitchen] update done some items for any customer by customerId
+![alt text](docs/6.png)
+### [Kitchen] if the `finished` == `quantity` => that item of customer's ordert is done (status = 2)
+![alt text](docs/7.png)
+### [Counter] end the order => payment. Only calculate finished item (either is cancel)
+![alt text](docs/8.png)
+![alt text](docs/10.png)
+In here we only calculate 2 of itemId = 1, cancel 8 of itemId = 2 and 19 of itemId = 3
+![alt text](docs/9.png)
+### [Counter] get completed orders
+![alt text](docs/11.png)
+### [Product] Add new items
+![alt text](docs/12.png)
+### [Product] get image of item
+![alt text](docs/13.png)
+
+# 5. APIS
 
 ## Kitchen
 ```bash
@@ -110,7 +141,7 @@ curl --location --request GET 'http://localhost:8080/api/v1/product?name=image_f
 ```
 
 
-# 5. Migration sql
+# 6. Migration sql
 
 1. Create sql file
 2. Run UP to call up migration

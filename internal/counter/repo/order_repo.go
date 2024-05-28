@@ -146,7 +146,10 @@ func (order orderRepo) GetOrderById(ctx context.Context, orderId int32) (domain.
 	var orders []domain.Order
 	query.ScanStructs(&orders)
 
-	return orders[0], nil
+	if len(orders) >= 1 {
+		return orders[0], nil
+	}
+	return domain.Order{}, nil
 }
 
 func (order orderRepo) GetOrderByCustomerId(ctx context.Context, customerId int32) ([]domain.Order, error) {
@@ -158,7 +161,10 @@ func (order orderRepo) GetOrderByCustomerId(ctx context.Context, customerId int3
 	var orders []domain.Order
 	query.ScanStructs(&orders)
 
-	return orders, nil
+	if len(orders) >= 1 {
+		return orders, nil
+	}
+	return nil, nil
 }
 
 func (order orderRepo) GetOrderItem(ctx context.Context, orderIds []int32) ([]domain.OrderItem, error) {
@@ -171,7 +177,10 @@ func (order orderRepo) GetOrderItem(ctx context.Context, orderIds []int32) ([]do
 	var orders []domain.OrderItem
 	query.ScanStructs(&orders)
 
-	return orders, nil
+	if len(orders) >= 1 {
+		return orders, nil
+	}
+	return nil, nil
 }
 
 func (order orderRepo) GetOrders(ctx context.Context) ([]domain.Order, error) {
@@ -181,5 +190,8 @@ func (order orderRepo) GetOrders(ctx context.Context) ([]domain.Order, error) {
 
 	var orders []domain.Order
 	query.ScanStructs(&orders)
-	return orders, nil
+	if len(orders) >= 1 {
+		return orders, nil
+	}
+	return nil, nil
 }

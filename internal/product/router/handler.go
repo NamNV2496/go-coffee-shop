@@ -6,6 +6,7 @@ import (
 
 	grpcpb "github.com/namnv2496/go-coffee-shop-demo/grpc/grpcpb/gen"
 
+	"github.com/namnv2496/go-coffee-shop-demo/internal/product/domain"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/service"
 )
 
@@ -80,7 +81,14 @@ func (s handler) GetProducts(
 	} else {
 		size = request.Size
 	}
-	itemList, err := s.ItemService.GetAllItems(context.Background(), page, size)
+
+	var itemList []domain.Item
+	var err error
+	if request.Id != 0 || request.Name != "" {
+		itemList, err = s.ItemService.GetItemByIdOrName(context.Background(), request.Id, request.Name, page, size)
+	} else {
+		itemList, err = s.ItemService.GetAllItems(context.Background(), page, size)
+	}
 	if err != nil {
 		panic("Error when get items: " + string(err.Error()))
 	}

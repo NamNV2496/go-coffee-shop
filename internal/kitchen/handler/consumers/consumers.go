@@ -27,7 +27,7 @@ func NewHandler(
 func (c consumerHandler) StartConsumerUp(ctx context.Context) error {
 	fmt.Println("Add consumer for topic: ", mq.TOPIC_PROCESS_COOK)
 	c.Consumer.RegisterHandler(
-		mq.TOPIC_ORDER_STATUS_UPDATE,
+		mq.TOPIC_PROCESS_COOK,
 		func(ctx context.Context, queueName string, payload []byte) error {
 			fmt.Println("listen from queue: " + queueName + ". Data: " + string(payload))
 			fmt.Println("have new order. Please check and do it!")

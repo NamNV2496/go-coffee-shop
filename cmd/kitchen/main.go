@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen/app"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/mq"
 	"google.golang.org/grpc"
 )
 
@@ -20,11 +20,14 @@ func main() {
 	}
 	ctx := context.Background()
 	go func() {
+		// run kafka consumer
+		fmt.Println("Starting Kafka consumer")
 		app.Start(ctx)
 	}()
 	defer cleanup()
 	r := SetupGin()
 	rounting(ctx, app, r)
+	// Run Gin server
 	r.Run(":8082")
 }
 
@@ -51,11 +54,7 @@ func rounting(ctx context.Context, app *app.App, r *gin.Engine) {
 		if err != nil {
 			panic("Invalid input")
 		}
-		finishNumber, err := mq.FindCockStatus(int32(finishedConv))
-		if err != nil {
-			panic("Invalid input")
-		}
-		app.KitchenService.UpdateStatusOrderToRedis(ctx, int32(idConv), int32(itemConv), int32(finishNumber))
+		app.KitchenService.UpdateStatusOrderToRedis(ctx, int32(idConv), int32(itemConv), int32(finishedConv))
 	})
 	r.GET("/api/v1/getOrdersByCustomerId", func(req *gin.Context) {
 		id := req.Query("customerId")

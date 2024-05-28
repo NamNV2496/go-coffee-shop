@@ -40,7 +40,7 @@ func routing(app *app.App, r *gin.Engine, ctx context.Context) {
 	// submit order to get data in cache and save it to DB
 	r.POST("/api/v1/submitOrder", func(req *gin.Context) { app.SubmitOrder(ctx, req) })
 	/// update status of order (only for cancel)
-	r.PUT("/api/v1/updateOrderStatus", func(req *gin.Context) { app.UpdateOrderStatus(ctx, req) })
+	// r.PUT("/api/v1/updateOrderStatus", func(req *gin.Context) { app.UpdateOrderStatus(ctx, req) })
 	// get item by id or name
 	r.GET("/api/v1/getItems", func(req *gin.Context) { app.GetItem(ctx, req) })
 	// view order by orderId or customerId

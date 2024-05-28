@@ -33,10 +33,5 @@ service ProductService {
 		option (google.api.http) = {
 			get: "/v1/api/products"
 		};
-		// option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
-		// 	summary: "List item by id or by name"
-		// 	description: "List item by id or by name"
-		// 	tags: "Products"
-		// };
 	}
 }

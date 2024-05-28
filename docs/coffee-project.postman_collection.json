@@ -1,0 +1,306 @@
+{
+	"info": {
+		"_postman_id": "c73402ee-8004-4381-9d04-3c040d76e6c9",
+		"name": "project",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. createOrder",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"customerId\": 1,\r\n    \"OrderItems\": [\r\n        {\r\n            \"ItemId\": 1,\r\n            \"Quantity\": 4,\r\n            \"Price\": 50\r\n        },\r\n        {\r\n            \"ItemId\": 4,\r\n            \"Quantity\": 1,\r\n            \"Price\": 120\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/createOrder",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"createOrder"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "0. getItems",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n    {\r\n        \"ItemId\": 1,\r\n        \"Quantity\": 1,\r\n        \"Price\": 15\r\n    }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/getItems?id=4&name=thịt",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"getItems"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "4"
+						},
+						{
+							"key": "name",
+							"value": "thịt"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. getOrders",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8081/api/v1/getOrders?orderId=2&customerId=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"getOrders"
+					],
+					"query": [
+						{
+							"key": "orderId",
+							"value": "2"
+						},
+						{
+							"key": "customerId",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. getOrdersByCustomerId",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8082/api/v1/getOrdersByCustomerId?customerId=2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"v1",
+						"getOrdersByCustomerId"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "2"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. getOrders",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8082/api/v1/getOrders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"v1",
+						"getOrders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. updateOrderStatus",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8082/api/v1/updateOrderStatus?customerId=1&itemId=4&finished=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8082",
+					"path": [
+						"api",
+						"v1",
+						"updateOrderStatus"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "1"
+						},
+						{
+							"key": "itemId",
+							"value": "4"
+						},
+						{
+							"key": "finished",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. submitOrder",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"customerId\": 2,\r\n    \"OrderItems\": [\r\n        {\r\n            \"ItemId\": 1,\r\n            \"Quantity\": 1,\r\n            \"Price\": 100\r\n        },\r\n        {\r\n            \"ItemId\": 2,\r\n            \"Quantity\": 1,\r\n            \"Price\": 300\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8081/api/v1/submitOrder?customerId=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8081",
+					"path": [
+						"api",
+						"v1",
+						"submitOrder"
+					],
+					"query": [
+						{
+							"key": "customerId",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7. product",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"contentType": "image/jpeg",
+							"type": "file",
+							"src": "/C:/Users/vanna/Downloads/đậu.jpg"
+						},
+						{
+							"key": "name",
+							"value": "đậu lướt ván",
+							"type": "default"
+						},
+						{
+							"key": "price",
+							"value": "500",
+							"type": "default"
+						},
+						{
+							"key": "type",
+							"value": "0",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/product",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"product"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8. product",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/product?name=image_file_đậu_lướt_ván.png",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"product"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "image_file_đậu_lướt_ván.png"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
