@@ -2,30 +2,34 @@ package main
 
 import (
 	"context"
+	"syscall"
 
 	"github.com/gin-gonic/gin"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/app"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/utils"
 	"google.golang.org/grpc"
 )
 
 func main() {
 
-	server := grpc.NewServer()
-	defer server.GracefulStop()
+	grpc := grpc.NewServer()
+	defer grpc.GracefulStop()
 
-	app, cleanup, err := counter.Initialize(server, "")
+	app, cleanup, err := counter.Initialize(grpc, "")
 	if err != nil {
 		panic("Error start app")
 	}
 	defer cleanup()
 	r := SetupGin()
 
-	ctx := context.Background()
-	app.Start(ctx)
+	app.Start()
 
-	routing(app, r, ctx)
-	r.Run(":8081")
+	go func() {
+		routing(app, r, context.Background())
+		r.Run(":8081")
+	}()
+	utils.BlockUntilSignal(syscall.SIGINT, syscall.SIGTERM)
 }
 
 func SetupGin() *gin.Engine {

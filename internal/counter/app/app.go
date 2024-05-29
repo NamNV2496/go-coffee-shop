@@ -20,7 +20,7 @@ import (
 )
 
 type AppInterface interface {
-	Start(ctx context.Context) error
+	Start() error
 	CreateOrder(ctx context.Context, req *gin.Context)
 	SubmitOrder(ctx context.Context, req *gin.Context)
 	// UpdateOrderStatus(ctx context.Context, req *gin.Context)
@@ -55,14 +55,19 @@ func NewApp(
 	}
 }
 
-func (app App) Start(ctx context.Context) error {
+func (app App) Start() error {
 
 	// app.ConsumerHandler.StartConsumerUp(ctx)
-	err := app.startScheduler()
-	return err
+	go func() {
+		err := app.startScheduler(context.Background())
+		if err != nil {
+			panic("failed to start scheduler")
+		}
+	}()
+	return nil
 }
 
-func (app App) startScheduler() error {
+func (app App) startScheduler(ctx context.Context) error {
 	scheduler, err := gocron.NewScheduler()
 	if err != nil {
 		return errors.New("failed to initialize scheduler")

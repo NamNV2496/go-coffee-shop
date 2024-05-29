@@ -12,7 +12,7 @@ import (
 )
 
 type AppInterface interface {
-	Start(ctx context.Context)
+	Start() error
 	UpdateCoockedDoneStatus(ctx context.Context, req *gin.Context)
 }
 
@@ -37,8 +37,12 @@ func NewApp(
 	}
 }
 
-func (app App) Start(ctx context.Context) {
-	app.ConsumerHandler.StartConsumerUp(ctx)
+func (app App) Start() error {
+
+	go func() {
+		app.ConsumerHandler.StartConsumerUp(context.Background())
+	}()
+	return nil
 }
 
 func (app App) UpdateCoockedDoneStatus(ctx context.Context, req *gin.Context) {

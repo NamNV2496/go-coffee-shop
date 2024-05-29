@@ -15,7 +15,7 @@ import (
 )
 
 type AppInterface interface {
-	Start(ctx context.Context)
+	Start() error
 	AddNewProduct(ctx context.Context, req *gin.Context) (int32, error)
 	GetImageInMinio(ctx context.Context, req *gin.Context) error
 }
@@ -34,8 +34,11 @@ func NewApp(
 	}
 }
 
-func (a App) Start(ctx context.Context) {
-	a.grpcServer.StartServerGRPC()
+func (a App) Start() error {
+	go func() {
+		a.grpcServer.StartServerGRPC()
+	}()
+	return nil
 }
 
 func (a App) AddNewProduct(ctx context.Context, req *gin.Context) (int32, error) {
