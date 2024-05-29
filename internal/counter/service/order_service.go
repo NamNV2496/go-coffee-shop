@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/namnv2496/go-coffee-shop-demo/internal/cache"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/domain"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/repo"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/mq"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/cache"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -22,9 +22,9 @@ type OrderService interface {
 }
 
 type orderService struct {
-	Cache        cache.Client
-	OrderRepo    repo.OrderRepo
-	CustomerRepo repo.CustomerRepo
+	cache        cache.Client
+	orderRepo    repo.OrderRepo
+	customerRepo repo.CustomerRepo
 }
 
 func NewOrderService(
@@ -33,9 +33,9 @@ func NewOrderService(
 	cache cache.Client,
 ) OrderService {
 	return &orderService{
-		OrderRepo:    orderRepo,
-		CustomerRepo: customerRepo,
-		Cache:        cache,
+		orderRepo:    orderRepo,
+		customerRepo: customerRepo,
+		cache:        cache,
 	}
 }
 
@@ -55,17 +55,17 @@ func (s orderService) GetOrder(
 
 	if orderId != 0 {
 		// get by orderId
-		order, err := s.OrderRepo.GetOrderById(ctx, orderId)
+		order, err := s.orderRepo.GetOrderById(ctx, orderId)
 		if err != nil {
 			fmt.Println("Error when get order")
 		}
 
-		orderItems, err = s.OrderRepo.GetOrderItem(ctx, []int32{orderId})
+		orderItems, err = s.orderRepo.GetOrderItem(ctx, []int32{orderId})
 		if err != nil {
 			fmt.Println("Error when get order")
 		}
 
-		customer, err = s.CustomerRepo.GetCustomer(ctx, order.Customer_id)
+		customer, err = s.customerRepo.GetCustomer(ctx, order.Customer_id)
 		if err != nil {
 			fmt.Println("Cannot get customer information")
 		}
@@ -76,12 +76,12 @@ func (s orderService) GetOrder(
 		orderElement = append(orderElement, element)
 	} else if customerId != 0 {
 		// get by customerId
-		customer, err = s.CustomerRepo.GetCustomer(ctx, customerId)
+		customer, err = s.customerRepo.GetCustomer(ctx, customerId)
 		if err != nil {
 			fmt.Println("Cannot get customer information")
 		}
 
-		orders, err = s.OrderRepo.GetOrderByCustomerId(ctx, customerId)
+		orders, err = s.orderRepo.GetOrderByCustomerId(ctx, customerId)
 		if err != nil {
 			fmt.Println("Error when get order")
 		}
@@ -90,11 +90,11 @@ func (s orderService) GetOrder(
 		orderElement = append(orderElement, tmp...)
 	} else {
 		// get all orders
-		orders, err = s.OrderRepo.GetOrders(ctx)
+		orders, err = s.orderRepo.GetOrders(ctx)
 		if err != nil {
 			fmt.Println("Error when get order")
 		}
-		customers, err := s.CustomerRepo.GetCustomers(ctx)
+		customers, err := s.customerRepo.GetCustomers(ctx)
 		if err != nil {
 			fmt.Println("Error when get customer")
 		}
@@ -123,7 +123,7 @@ func (s orderService) getOrderByIds(
 	for _, order := range orders {
 		orderIds = append(orderIds, order.Id)
 	}
-	orderItems, err := s.OrderRepo.GetOrderItem(ctx, orderIds)
+	orderItems, err := s.orderRepo.GetOrderItem(ctx, orderIds)
 	if err != nil {
 		fmt.Println("Error when get order")
 	}
@@ -152,7 +152,7 @@ func (s orderService) CreateOrder(
 	customerId int32,
 ) error {
 
-	data, exist := s.Cache.Get(ctx, mq.REDIS_KEY_ORDER)
+	data, exist := s.cache.Get(ctx, mq.REDIS_KEY_ORDER)
 	newData, ok := s.convertToDTO(orders, customerId)
 	if ok != nil {
 		return status.Error(codes.Internal, "failed to convert orders to newData template")
@@ -166,7 +166,7 @@ func (s orderService) CreateOrder(
 		if ok != nil {
 			return status.Error(codes.Internal, "failed to marshall data into cache")
 		}
-		s.Cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
+		s.cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
 		return nil
 	}
 	fmt.Println("[TEST] update old order in redis")
@@ -240,7 +240,7 @@ func (s orderService) CreateOrder(
 	if ok != nil {
 		return status.Error(codes.Internal, "failed to marshall data into cache")
 	}
-	s.Cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
+	s.cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
 	return nil
 }
 
@@ -269,7 +269,7 @@ func (s orderService) SubmitOrder(
 	ctx context.Context,
 	customerId int32,
 ) (int32, error) {
-	data, exist := s.Cache.Get(ctx, mq.REDIS_KEY_ORDER)
+	data, exist := s.cache.Get(ctx, mq.REDIS_KEY_ORDER)
 	if exist != nil {
 		return 0, status.Error(codes.Internal, "failed to update status of not exist customerId")
 	}
@@ -298,8 +298,8 @@ func (s orderService) SubmitOrder(
 			if ok != nil {
 				return 0, status.Error(codes.Internal, "failed to marshall data into cache")
 			}
-			s.Cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
-			return s.OrderRepo.CreateOrder(ctx, orders, customerId)
+			s.cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
+			return s.orderRepo.CreateOrder(ctx, orders, customerId)
 		}
 	}
 	return 0, status.Error(codes.Internal, "order of customerId is not exist")
@@ -311,7 +311,7 @@ func (s orderService) UpdateStatusOrder(
 	status int32,
 ) error {
 
-	return s.OrderRepo.UpdateStatusOrder(ctx, orderId, status)
+	return s.orderRepo.UpdateStatusOrder(ctx, orderId, status)
 }
 
 func (s orderService) ClearAllOrderEOD(
@@ -323,6 +323,6 @@ func (s orderService) ClearAllOrderEOD(
 	if ok != nil {
 		return status.Error(codes.Internal, "failed to marshall data into cache")
 	}
-	s.Cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
+	s.cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
 	return nil
 }

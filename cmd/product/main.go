@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/app"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/utils"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/utils"
 	"google.golang.org/grpc"
 )
 

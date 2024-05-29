@@ -4,15 +4,15 @@ package counter
 
 import (
 	"github.com/google/wire"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/cache"
-	configs "github.com/namnv2496/go-coffee-shop-demo/internal/configs"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/app"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/handler"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/handler/jobs"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/repo"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/service"
-	data_access "github.com/namnv2496/go-coffee-shop-demo/internal/data_access"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/mq"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/cache"
+	configs "github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
+	data_access "github.com/namnv2496/go-coffee-shop-demo/pkg/data_access"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq"
 	"google.golang.org/grpc"
 )
 

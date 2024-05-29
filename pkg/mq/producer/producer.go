@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/IBM/sarama"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/configs"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

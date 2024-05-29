@@ -7,7 +7,7 @@ import (
 	"os/signal"
 
 	"github.com/IBM/sarama"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/configs"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
 )
 
 type HandlerFunc func(ctx context.Context, queueName string, payload []byte) error

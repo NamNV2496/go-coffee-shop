@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/minio/minio-go"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/configs"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
 )
 
 type S3Client interface {

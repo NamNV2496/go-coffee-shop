@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	grpcpb "github.com/namnv2496/go-coffee-shop-demo/grpc/grpcpb/gen"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/configs"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/domain"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )

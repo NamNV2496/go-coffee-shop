@@ -4,12 +4,12 @@ package kitchen
 
 import (
 	"github.com/google/wire"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/cache"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/configs"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen/app"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen/handler"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen/service"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/mq"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/cache"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq"
 	"google.golang.org/grpc"
 )
 

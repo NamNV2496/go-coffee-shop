@@ -7,13 +7,13 @@
 package product
 
 import (
-	"github.com/namnv2496/go-coffee-shop-demo/internal/configs"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/data_access"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/app"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/repo"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/router"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/service"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/s3"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/data_access"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/s3"
 	"google.golang.org/grpc"
 )
 

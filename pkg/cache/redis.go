@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/configs"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/mq"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

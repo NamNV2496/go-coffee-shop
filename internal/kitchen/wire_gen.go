@@ -7,13 +7,13 @@
 package kitchen
 
 import (
-	"github.com/namnv2496/go-coffee-shop-demo/internal/cache"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/configs"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen/app"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen/handler/consumers"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen/service"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/mq/consumer"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/mq/producer"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/cache"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq/consumer"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq/producer"
 	"google.golang.org/grpc"
 )
 

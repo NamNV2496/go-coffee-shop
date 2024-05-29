@@ -7,7 +7,7 @@ import (
 	"log"
 
 	"github.com/doug-martin/goqu/v9"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/configs"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
 
 	_ "github.com/doug-martin/goqu/v9/dialect/mysql" // Import MySQL goqu dialect
 	_ "github.com/go-sql-driver/mysql"               // Import MySQL driver

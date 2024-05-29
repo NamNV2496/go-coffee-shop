@@ -11,7 +11,7 @@ import (
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/domain"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/router"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/service"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/s3"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/s3"
 )
 
 type AppInterface interface {
@@ -21,7 +21,7 @@ type AppInterface interface {
 }
 type App struct {
 	grpcServer     router.ProductServer
-	ProductService service.ProductService
+	productService service.ProductService
 }
 
 func NewApp(
@@ -30,7 +30,7 @@ func NewApp(
 ) *App {
 	return &App{
 		grpcServer:     server,
-		ProductService: productService,
+		productService: productService,
 	}
 }
 
@@ -71,7 +71,7 @@ func (a App) AddNewProduct(ctx context.Context, req *gin.Context) (int32, error)
 	// Respond to the client
 	req.String(http.StatusOK, fmt.Sprintf("File uploaded successfully!"))
 
-	return a.ProductService.AddNewProduct(
+	return a.productService.AddNewProduct(
 		ctx,
 		s3.BUCKETNAME,
 		domain.Item{
@@ -87,7 +87,7 @@ func (a App) AddNewProduct(ctx context.Context, req *gin.Context) (int32, error)
 
 func (a App) GetImageInMinio(ctx context.Context, req *gin.Context) (string, error) {
 
-	link, _ := a.ProductService.GetImageInMinio(ctx, req.Query("name"))
+	link, _ := a.productService.GetImageInMinio(ctx, req.Query("name"))
 
 	req.String(http.StatusBadRequest, link)
 	return "", nil

@@ -6,8 +6,8 @@ package consumers
 // 	"fmt"
 
 // 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/service"
-// 	"github.com/namnv2496/go-coffee-shop-demo/internal/mq"
-// 	"github.com/namnv2496/go-coffee-shop-demo/internal/mq/consumer"
+// 	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq"
+// 	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq/consumer"
 // )
 
 // type ConsumerHandler interface {

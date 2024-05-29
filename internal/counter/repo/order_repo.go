@@ -6,7 +6,7 @@ import (
 
 	"github.com/doug-martin/goqu/v9"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/domain"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/data_access/enums"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/data_access/enums"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

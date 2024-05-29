@@ -16,7 +16,7 @@ type Handler interface {
 }
 type handler struct {
 	grpcpb.UnimplementedProductServiceServer
-	ItemService service.ProductService
+	itemService service.ProductService
 }
 
 func NewHandler(
@@ -24,7 +24,7 @@ func NewHandler(
 ) grpcpb.ProductServiceServer {
 
 	return &handler{
-		ItemService: itemService,
+		itemService: itemService,
 	}
 }
 
@@ -45,7 +45,7 @@ func (s handler) GetProductByIdOrName(
 	} else {
 		size = request.Size
 	}
-	itemList, err := s.ItemService.GetItemByIdOrName(context.Background(), request.Id, request.Name, page, size)
+	itemList, err := s.itemService.GetItemByIdOrName(context.Background(), request.Id, request.Name, page, size)
 	if err != nil {
 		panic("Error when get items: " + string(err.Error()))
 	}
@@ -85,9 +85,9 @@ func (s handler) GetProducts(
 	var itemList []domain.Item
 	var err error
 	if request.Id != 0 || request.Name != "" {
-		itemList, err = s.ItemService.GetItemByIdOrName(context.Background(), request.Id, request.Name, page, size)
+		itemList, err = s.itemService.GetItemByIdOrName(context.Background(), request.Id, request.Name, page, size)
 	} else {
-		itemList, err = s.ItemService.GetAllItems(context.Background(), page, size)
+		itemList, err = s.itemService.GetAllItems(context.Background(), page, size)
 	}
 	if err != nil {
 		panic("Error when get items: " + string(err.Error()))

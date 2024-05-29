@@ -8,7 +8,7 @@ import (
 
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/domain"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/repo"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/s3"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/s3"
 )
 
 type ProductService interface {

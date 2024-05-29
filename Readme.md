@@ -71,15 +71,7 @@ curl --location --request PUT 'http://localhost:8082/api/v1/updateOrderStatus?cu
 ## counter
 ```bash
 # search item to order
-curl --location --request GET 'http://localhost:8081/api/v1/getItems?id=4&name=thịt' \
---header 'Content-Type: application/json' \
---data-raw '[
-    {
-        "ItemId": 1,
-        "Quantity": 1,
-        "Price": 15
-    }
-]'
+curl --location --request GET 'http://localhost:8081/api/v1/getItems?id=4&name=thịt'
 
 
 # create temporary order

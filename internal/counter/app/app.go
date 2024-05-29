@@ -10,13 +10,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-co-op/gocron/v2"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/configs"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/domain"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/handler/jobs"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/handler/router"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/service"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/mq"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/mq/producer"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq/producer"
 )
 
 type AppInterface interface {
@@ -29,9 +29,9 @@ type AppInterface interface {
 }
 
 type App struct {
-	OrderService service.OrderService
-	GrpcClient   router.ProductGRPCClient
-	Producer     producer.Client
+	orderService service.OrderService
+	grpcClient   router.ProductGRPCClient
+	producer     producer.Client
 	// ConsumerHandler consumers.ConsumerHandler
 	jobs       jobs.ClearAllOrderEOD
 	cronConfig configs.Cron
@@ -46,9 +46,9 @@ func NewApp(
 	cronConfig configs.Cron,
 ) *App {
 	return &App{
-		OrderService: orderService,
-		GrpcClient:   grpcClient,
-		Producer:     producer,
+		orderService: orderService,
+		grpcClient:   grpcClient,
+		producer:     producer,
 		// ConsumerHandler: consumerHandler,
 		jobs:       jobs,
 		cronConfig: cronConfig,
@@ -124,10 +124,11 @@ func (app App) CreateOrder(ctx context.Context, req *gin.Context) {
 
 	if err := req.BindJSON(&orderList); err != nil {
 		req.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		fmt.Println("Failed: ", err)
 		return
 	}
 
-	err := app.OrderService.CreateOrder(context.Background(), orderList.OrderItems, orderList.CustomerId)
+	err := app.orderService.CreateOrder(context.Background(), orderList.OrderItems, orderList.CustomerId)
 	if err != nil {
 		panic(fmt.Sprintf("Insert fail: %v", err))
 	}
@@ -137,8 +138,8 @@ func (app App) CreateOrder(ctx context.Context, req *gin.Context) {
 		fmt.Println("Error marshall data to send to kitchen")
 	}
 	go func() {
-		fmt.Println("Call trigger to kitchen: ", data)
-		app.Producer.Produce(context.Background(), mq.TOPIC_PROCESS_COOK, data)
+		fmt.Println("Call trigger to kitchen: ", orderList)
+		app.producer.Produce(context.Background(), mq.TOPIC_PROCESS_COOK, data)
 	}()
 	req.JSON(http.StatusCreated, gin.H{"message": err})
 }
@@ -149,7 +150,7 @@ func (app App) SubmitOrder(ctx context.Context, req *gin.Context) {
 	if err != nil {
 		panic(fmt.Sprintf("Insert fail: %v", err))
 	}
-	id, err := app.OrderService.SubmitOrder(context.Background(), int32(customerId))
+	id, err := app.orderService.SubmitOrder(context.Background(), int32(customerId))
 	if err != nil {
 		panic(fmt.Sprintf("Insert fail: %v", err))
 	}
@@ -161,7 +162,7 @@ func (app App) GetItem(ctx context.Context, req *gin.Context) {
 	id := req.Query("id")
 	name := req.Query("name")
 	num, _ := strconv.Atoi(id)
-	items, err := app.GrpcClient.GetProductByIdOrName(int32(num), name)
+	items, err := app.grpcClient.GetProductByIdOrName(int32(num), name)
 	if err != nil {
 		panic("get items fail")
 	}
@@ -179,7 +180,7 @@ func (app App) GetOrders(ctx context.Context, req *gin.Context) {
 		customerId = 0
 	}
 
-	orderDtoRes, err := app.OrderService.GetOrder(context.Background(), int32(orderId), int32(customerId))
+	orderDtoRes, err := app.orderService.GetOrder(context.Background(), int32(orderId), int32(customerId))
 	if err != nil {
 		fmt.Println("Error")
 	}
