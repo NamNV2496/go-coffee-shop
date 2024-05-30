@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/service"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/batch/service"
 )
 
 type ClearAllOrderEOD interface {

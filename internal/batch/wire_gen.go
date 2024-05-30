@@ -4,23 +4,21 @@
 //go:build !wireinject
 // +build !wireinject
 
-package counter
+package batch
 
 import (
-	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/app"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/handler/router"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/repo"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/service"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/batch/app"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/batch/handler/jobs"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/batch/repo"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/batch/service"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/cache"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/data_access"
-	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq/producer"
-	"google.golang.org/grpc"
 )
 
 // Injectors from wire.go:
 
-func Initialize(grpc2 *grpc.Server, filePath configs.ConfigFilePath) (*app.App, func(), error) {
+func Initialize(filePath configs.ConfigFilePath) (*app.App, func(), error) {
 	config, err := configs.GetConfigFromYaml(filePath)
 	if err != nil {
 		return nil, nil, err
@@ -35,13 +33,9 @@ func Initialize(grpc2 *grpc.Server, filePath configs.ConfigFilePath) (*app.App, 
 	redis := config.Redis
 	client := cache.NewRedisClient(redis)
 	orderService := service.NewOrderService(orderRepo, customerRepo, client)
-	productGRPCClient, err := router.NewGRPCProductClient(config)
-	if err != nil {
-		cleanup()
-		return nil, nil, err
-	}
-	producerClient := producer.NewClient(config)
-	appApp := app.NewApp(orderService, productGRPCClient, producerClient)
+	clearAllOrderEOD := jobs.NewExecuteClearAllOrderEOD(orderService)
+	cron := config.Cron
+	appApp := app.NewApp(clearAllOrderEOD, cron)
 	return appApp, func() {
 		cleanup()
 	}, nil

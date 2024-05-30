@@ -7,5 +7,4 @@ import (
 
 var HandlerWireSet = wire.NewSet(
 	router.NewGRPCProductClient,
-	// consumers.NewHandler,
 )

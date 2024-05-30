@@ -20,6 +20,7 @@
         6. minio - "github.com/minio/minio-go"
         7. gorp_migration - "github.com/rubenv/sql-migrate"
         8. goqu - "github.com/doug-martin/goqu/v9"
+        9. ratelimit - "go.uber.org/ratelimit"
 
 
 # 3. Flow

@@ -6,7 +6,6 @@ import (
 	"github.com/google/wire"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/app"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/handler"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/handler/jobs"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/repo"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/service"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/cache"
@@ -28,7 +27,6 @@ func Initialize(grpc *grpc.Server, filePath configs.ConfigFilePath) (*app.App, f
 		service.ServiceWireSet,
 		handler.HandlerWireSet,
 		app.NewApp,
-		jobs.JobWireSet,
 	)
 	return nil, nil, nil
 }
