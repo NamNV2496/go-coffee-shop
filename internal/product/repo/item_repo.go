@@ -2,7 +2,6 @@ package repo
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/doug-martin/goqu/v9"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/domain"
@@ -71,8 +70,6 @@ func (itemRepo *itemRepo) GetByIdOrName(
 		Where(goqu.Or(conditions...)).
 		Offset(uint(offset) * uint(limit)).
 		Limit(uint(limit))
-	sql, _, _ := query.ToSQL()
-	fmt.Println("Test query: ", sql)
 
 	itemList := make([]domain.Item, 0)
 	err := query.Executor().ScanStructsContext(ctx, &itemList)

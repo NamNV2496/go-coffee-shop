@@ -6,9 +6,10 @@ var (
 	TabNameItem = goqu.T("items")
 )
 
-type Item struct {
-	Id    int32  `json:"id"`
-	Name  string `json:"name"`
-	Price int32  `json:"price"`
-	Type  int32  `json:"type"`
-}
+// type Item struct {
+// 	Id    int32  `json:"id"`
+// 	Name  string `json:"name"`
+// 	Price int32  `json:"price"`
+// 	Type  int32  `json:"type"`
+// 	Image string `json:"image"`
+// }

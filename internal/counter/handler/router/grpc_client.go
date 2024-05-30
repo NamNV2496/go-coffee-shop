@@ -5,14 +5,13 @@ import (
 	"fmt"
 
 	grpcpb "github.com/namnv2496/go-coffee-shop-demo/grpc/grpcpb/gen"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/domain"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 type ProductGRPCClient interface {
-	GetProductByIdOrName(id int32, name string) ([]domain.Item, error)
+	GetProductByIdOrName(id int32, name string, page int32, size int32) ([]*grpcpb.Item, error)
 }
 
 type productGRPCClient struct {
@@ -32,27 +31,25 @@ func NewGRPCProductClient(
 	}, nil
 }
 
-func (c *productGRPCClient) GetProductByIdOrName(id int32, name string) ([]domain.Item, error) {
+func (c *productGRPCClient) GetProductByIdOrName(
+	id int32,
+	name string,
+	page int32,
+	size int32,
+) ([]*grpcpb.Item, error) {
 
 	client := grpcpb.NewProductServiceClient(c.conn)
 
 	result, err := client.GetProducts(context.Background(), &grpcpb.GetProductsRequest{
 		Id:   id,
 		Name: name,
+		Page: 0,
+		Size: 50,
 	})
 
 	if err != nil {
 		fmt.Println("Error: ", err)
 	}
-	fmt.Println("result: ", result)
-	res := make([]domain.Item, 0)
-	for _, item := range result.Items {
-		res = append(res, domain.Item{
-			Id:    item.Id,
-			Name:  item.Name,
-			Price: item.Price,
-			Type:  item.Type,
-		})
-	}
-	return res, nil
+	// fmt.Println("result: ", result)
+	return result.Items, nil
 }

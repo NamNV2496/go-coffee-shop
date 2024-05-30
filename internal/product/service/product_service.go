@@ -62,7 +62,7 @@ func (s productService) AddNewProduct(
 	contentType string,
 ) (int32, error) {
 
-	fileName := strings.ReplaceAll(item.Name, " ", "_")
+	fileName := s.convertString(item.Name)
 	fileName = fmt.Sprintf("image_file_%v.png", fileName)
 
 	// save to DB
@@ -83,6 +83,44 @@ func (s productService) AddNewProduct(
 		panic("Fail to upload to minio")
 	}
 	return id, nil
+}
+
+func (s productService) removeDiacritics(str string) string {
+	replacements := map[rune]rune{
+		'đ': 'd', 'Đ': 'D',
+		'á': 'a', 'à': 'a', 'ả': 'a', 'ã': 'a', 'ạ': 'a',
+		'ă': 'a', 'ắ': 'a', 'ằ': 'a', 'ẳ': 'a', 'ẵ': 'a', 'ặ': 'a',
+		'â': 'a', 'ấ': 'a', 'ầ': 'a', 'ẩ': 'a', 'ẫ': 'a', 'ậ': 'a',
+		'é': 'e', 'è': 'e', 'ẻ': 'e', 'ẽ': 'e', 'ẹ': 'e',
+		'ê': 'e', 'ế': 'e', 'ề': 'e', 'ể': 'e', 'ễ': 'e', 'ệ': 'e',
+		'í': 'i', 'ì': 'i', 'ỉ': 'i', 'ĩ': 'i', 'ị': 'i',
+		'ó': 'o', 'ò': 'o', 'ỏ': 'o', 'õ': 'o', 'ọ': 'o',
+		'ô': 'o', 'ố': 'o', 'ồ': 'o', 'ổ': 'o', 'ỗ': 'o', 'ộ': 'o',
+		'ơ': 'o', 'ớ': 'o', 'ờ': 'o', 'ở': 'o', 'ỡ': 'o', 'ợ': 'o',
+		'ú': 'u', 'ù': 'u', 'ủ': 'u', 'ũ': 'u', 'ụ': 'u',
+		'ư': 'u', 'ứ': 'u', 'ừ': 'u', 'ử': 'u', 'ữ': 'u', 'ự': 'u',
+		'ý': 'y', 'ỳ': 'y', 'ỷ': 'y', 'ỹ': 'y', 'ỵ': 'y',
+	}
+
+	var sb strings.Builder
+	for _, r := range str {
+		if repl, found := replacements[r]; found {
+			sb.WriteRune(repl)
+		} else {
+			sb.WriteRune(r)
+		}
+	}
+	return sb.String()
+}
+
+func (s productService) convertString(str string) string {
+	// Step 1: Remove diacritics
+	str = s.removeDiacritics(str)
+
+	// Step 2: Replace spaces with underscores
+	str = strings.ReplaceAll(str, " ", "_")
+
+	return str
 }
 
 func (s productService) GetImageInMinio(ctx context.Context, name string) (string, error) {

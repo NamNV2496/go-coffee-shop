@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kitchen</title>
+    <title>Payment</title>
     
     <link rel="stylesheet" href="css/main.css" type="text/css">
     <style>
@@ -47,30 +47,38 @@
                 <th>ItemId</th>
                 <th>Quantity</th>
                 <th>Finished</th>
+                <th>Price</th>
                 <th>Status</th>
-                <th>Update item</th>
             </tr>
         </thead>
         <tbody>
         </tbody>
     </table>
 
+    <div id="total" style="font-size: 32px; font-weight: bold;"> Total: </div>
+    <button type="button" onclick="completOrder()">Complete</button>
+
     <script>
 
-        async function updateItem(customerId, itemId) {
-            alert("Updated")
-            const url = new URL('http://localhost:8082/api/v1/updateOrderStatus');
+        async function completOrder() {
+            const customerId = document.getElementById('id').value;
+            if (customerId == "") {
+                alert('Please insert customerId');
+                return;
+            }
+            const url = new URL('http://localhost:8081/api/v1/submitOrder');
             if (customerId) url.searchParams.append('customerId', customerId);
-            if (itemId) url.searchParams.append('itemId', itemId);
-            url.searchParams.append('finished', 1);
+            
             try {
                 const response = await fetch(url, {
-                    method:'PUT'
+                    method:'POST'
                 });
                 const responseData = await response.json();
-            } catch {
-
+            } catch (error) {
+                console.error('Error when request: ', error);
+                alert('Failed to complete order');
             }
+            alert("Complete order " + customerId + " done!")
             location.reload()
         }
 
@@ -94,7 +102,10 @@
                 const tableBody = document.getElementById('resultsTable').querySelector('tbody');
                 tableBody.innerHTML = '';
 
+                // Calculate total
+                let totalAmount = 0;
                 if (getAll == true && responseData.message && responseData.message.length > 0 ) {
+
 
                     responseData.message.forEach(data => {
                         let customerId = data.customerId;
@@ -106,8 +117,8 @@
                                 <td>${item.itemId}</td>
                                 <td>${item.quantity}</td>
                                 <td>${item.finshed}</td>
+                                <td>${item.price}</td>
                                 <td style="font-weight: bold; text-align: center; font-size: 24px">${getStatusText(item.status)}</td>
-                                <a href="#" onclick="updateItem('${customerId}', '${item.itemId}')">Update</a>
                             `;
                             itemCount += 1
                             tableBody.appendChild(row);
@@ -116,6 +127,7 @@
                 } else if (getAll == false && responseData.message && responseData.message.RedisOrders && responseData.message.RedisOrders.length > 0) {
                     let customerId = responseData.message.customerId;
                     responseData.message.RedisOrders.forEach(item => {
+                        totalAmount += item.finshed * item.price; // Assuming you have item.price
                         const row = document.createElement('tr');
                         row.innerHTML = `
                             <td style="font-weight: bold; text-align: center; font-size: 24px">${customerId}</td>
@@ -123,6 +135,7 @@
                             <td>${item.itemId}</td>
                             <td>${item.quantity}</td>
                             <td>${item.finshed}</td>
+                            <td>${item.price}</td>
                             <td style="font-weight: bold; text-align: center; font-size: 24px">${getStatusText(item.status)}</td>
                         `;
                         itemCount += 1
@@ -133,6 +146,13 @@
                     row.innerHTML = `<td colspan="5">No results found</td>`;
                     tableBody.appendChild(row);
                 }
+
+
+
+
+                // Update total display
+                const totalElement = document.getElementById('total');
+                totalElement.textContent = `Total: $${totalAmount.toFixed(2)}`; // Format total with 2 decimal places
             } catch (error) {
                 console.error('Error fetching data:', error);
                 alert('Failed to fetch data');

@@ -310,6 +310,8 @@ func (m *Item) validate(all bool) error {
 
 	// no validation rules for Type
 
+	// no validation rules for Image
+
 	if len(errors) > 0 {
 		return ItemMultiError(errors)
 	}

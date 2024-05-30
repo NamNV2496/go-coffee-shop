@@ -1,15 +1,18 @@
 # 1. How to run
 
         1. `cd deployments/` open cmd: `docker-compose up`
-        2. `cd ../`
-        3. run counter-service `make run-counter`
-        4. run kitchen-service `make run-kitchen`
-        5. run product-service `make run-product`
+        2. Access `https://localhost:9001` and create `coffee` bucket (like picture in below)
+        3. `cd ../`
+        4. run counter-service `make run-counter`
+        5. run kitchen-service `make run-kitchen`
+        6. run product-service `make run-product`
+
+![alt text](docs/minio.png)
 
 # 2. Technologies
 
         0. Docker
-        1. RESTful - "github.com/gin-gonic/gin"
+        1. routes - "github.com/gin-gonic/gin"
         2. gRPC - "google.golang.org/grpc"
         3. redis - "github.com/go-redis/redis/v8"
         4. cron job - "github.com/go-co-op/gocron/v2"
@@ -18,10 +21,14 @@
         7. gorp_migration - "github.com/rubenv/sql-migrate"
         8. goqu - "github.com/doug-martin/goqu/v9"
 
+
 # 3. Flow
 
 ![alt text](docs/flow.png)
 
+### Sequence diagram
+
+![alt text](docs/sequence_diagram.png)
 
 # 4. How's it work
 
@@ -29,8 +36,10 @@
 
 ### [Counter] View all items
 ![alt text](docs/2.png)
+![alt text](docs/2_1.png)
 ### [Counter] View item by id or by name
 ![alt text](docs/3.png)
+![alt text](docs/3_1.png)
 ### [Counter] Create new order status == 1 (processing)
 ![alt text](docs/1.png)
 ### [Kitchen] view order by customerId to cook

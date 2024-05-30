@@ -98,6 +98,9 @@
         "Type": {
           "type": "integer",
           "format": "int32"
+        },
+        "Image": {
+          "type": "string"
         }
       }
     },

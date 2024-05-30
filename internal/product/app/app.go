@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -47,14 +46,14 @@ func (a App) AddNewProduct(ctx context.Context, req *gin.Context) (int32, error)
 	err := req.Request.ParseMultipartForm(10 << 20)
 	if err != nil {
 		req.String(http.StatusBadRequest, "File too large")
-		return 0, errors.New("File too large")
+		return 0, err
 	}
 
 	// Retrieve file from the request
 	file, header, err := req.Request.FormFile("file")
 	if err != nil {
 		req.String(http.StatusBadRequest, "Failed to retrieve file")
-		return 0, errors.New("Failed to retrieve file")
+		return 0, err
 	}
 	defer file.Close()
 
@@ -89,6 +88,6 @@ func (a App) GetImageInMinio(ctx context.Context, req *gin.Context) (string, err
 
 	link, _ := a.productService.GetImageInMinio(ctx, req.Query("name"))
 
-	req.String(http.StatusBadRequest, link)
+	req.JSON(http.StatusCreated, gin.H{"message": link})
 	return "", nil
 }

@@ -162,7 +162,13 @@ func (app App) GetItem(ctx context.Context, req *gin.Context) {
 	id := req.Query("id")
 	name := req.Query("name")
 	num, _ := strconv.Atoi(id)
-	items, err := app.grpcClient.GetProductByIdOrName(int32(num), name)
+	page := 0
+	size := 50
+	pageQuery := req.Query("page")
+	page, _ = strconv.Atoi(pageQuery)
+	sizeQuery := req.Query("size")
+	size, _ = strconv.Atoi(sizeQuery)
+	items, err := app.grpcClient.GetProductByIdOrName(int32(num), name, int32(page), int32(size))
 	if err != nil {
 		panic("get items fail")
 	}
