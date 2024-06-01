@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -11,12 +10,13 @@ import (
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/router"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/service"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/s3"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/utils"
 )
 
 type AppInterface interface {
 	Start() error
-	AddNewProduct(ctx context.Context, req *gin.Context) (int32, error)
-	GetImageInMinio(ctx context.Context, req *gin.Context) error
+	AddNewProduct(ctx context.Context, req *gin.Context)
+	GetImageInMinio(ctx context.Context, req *gin.Context)
 }
 type App struct {
 	grpcServer     router.ProductServer
@@ -40,37 +40,35 @@ func (a App) Start() error {
 	return nil
 }
 
-func (a App) AddNewProduct(ctx context.Context, req *gin.Context) (int32, error) {
+func (a App) AddNewProduct(ctx context.Context, req *gin.Context) {
 
 	// Parse the multipart form, 10 << 20 specifies a max upload size of 10MB
 	err := req.Request.ParseMultipartForm(10 << 20)
 	if err != nil {
-		req.String(http.StatusBadRequest, "File too large")
-		return 0, err
+		utils.WrapperResponse(req, http.StatusBadRequest, "File too large")
+		return
 	}
 
 	// Retrieve file from the request
 	file, header, err := req.Request.FormFile("file")
 	if err != nil {
-		req.String(http.StatusBadRequest, "Failed to retrieve file")
-		return 0, err
+		utils.WrapperResponse(req, http.StatusBadRequest, err.Error())
+		return
 	}
 	defer file.Close()
 
 	// Check the file type
 	fileType := header.Header.Get("Content-Type")
 	if fileType != "image/png" && fileType != "image/jpeg" {
-		req.String(http.StatusBadRequest, "Only PNG and JPEG files are allowed")
+		utils.WrapperResponse(req, http.StatusBadRequest, "Only PNG and JPEG files are allowed")
+		return
 	}
 
 	name := req.Request.FormValue("name")
 	price, _ := strconv.Atoi(req.Request.FormValue("price"))
 	foodType, _ := strconv.Atoi(req.Request.FormValue("type"))
 
-	// Respond to the client
-	req.String(http.StatusOK, fmt.Sprintf("File uploaded successfully!"))
-
-	return a.productService.AddNewProduct(
+	if id, err := a.productService.AddNewProduct(
 		ctx,
 		s3.BUCKETNAME,
 		domain.Item{
@@ -81,13 +79,17 @@ func (a App) AddNewProduct(ctx context.Context, req *gin.Context) (int32, error)
 		file,
 		header.Size,
 		header.Header.Get("Content-Type"),
-	)
+	); err != nil {
+		utils.WrapperResponse(req, http.StatusBadRequest, err.Error())
+		return
+	} else {
+		utils.WrapperResponse(req, http.StatusOK, id)
+	}
 }
 
-func (a App) GetImageInMinio(ctx context.Context, req *gin.Context) (string, error) {
+func (a App) GetImageInMinio(ctx context.Context, req *gin.Context) {
 
 	link, _ := a.productService.GetImageInMinio(ctx, req.Query("name"))
 
-	req.JSON(http.StatusCreated, gin.H{"message": link})
-	return "", nil
+	utils.WrapperResponse(req, http.StatusOK, link)
 }

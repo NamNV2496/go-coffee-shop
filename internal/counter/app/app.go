@@ -13,6 +13,7 @@ import (
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/service"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq/producer"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/utils"
 )
 
 type AppInterface interface {
@@ -66,14 +67,14 @@ func (app App) CreateOrder(ctx context.Context, req *gin.Context) {
 	var orderList domain.OrderItemListDto
 
 	if err := req.BindJSON(&orderList); err != nil {
-		req.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		fmt.Println("Failed: ", err)
+		utils.WrapperResponse(req, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	err := app.orderService.CreateOrder(context.Background(), orderList.OrderItems, orderList.CustomerId)
 	if err != nil {
-		panic(fmt.Sprintf("Insert fail: %v", err))
+		utils.WrapperResponse(req, http.StatusBadRequest, err.Error())
+		return
 	}
 	// trigger to kitchen
 	data, err := json.Marshal(orderList)
@@ -84,20 +85,22 @@ func (app App) CreateOrder(ctx context.Context, req *gin.Context) {
 		fmt.Println("Call trigger to kitchen: ", orderList)
 		app.producer.Produce(context.Background(), mq.TOPIC_PROCESS_COOK, data)
 	}()
-	req.JSON(http.StatusCreated, gin.H{"message": err})
+	utils.WrapperResponse(req, http.StatusCreated, "")
 }
 
 func (app App) SubmitOrder(ctx context.Context, req *gin.Context) {
 	queryId := req.Query("customerId")
 	customerId, err := strconv.Atoi(queryId)
 	if err != nil {
-		panic(fmt.Sprintf("Insert fail: %v", err))
+		utils.WrapperResponse(req, http.StatusBadRequest, err.Error())
+		return
 	}
 	id, err := app.orderService.SubmitOrder(context.Background(), int32(customerId))
 	if err != nil {
-		panic(fmt.Sprintf("Insert fail: %v", err))
+		utils.WrapperResponse(req, http.StatusBadRequest, err.Error())
+		return
 	}
-	req.JSON(http.StatusCreated, gin.H{"message": id})
+	utils.WrapperResponse(req, http.StatusOK, id)
 }
 
 func (app App) GetItem(ctx context.Context, req *gin.Context) {
@@ -113,9 +116,10 @@ func (app App) GetItem(ctx context.Context, req *gin.Context) {
 	size, _ = strconv.Atoi(sizeQuery)
 	items, err := app.grpcClient.GetProductByIdOrName(int32(num), name, int32(page), int32(size))
 	if err != nil {
-		panic("get items fail")
+		utils.WrapperResponse(req, http.StatusBadRequest, err.Error())
+		return
 	}
-	req.JSON(http.StatusCreated, gin.H{"message": items})
+	utils.WrapperResponse(req, http.StatusBadRequest, items)
 }
 
 func (app App) GetOrders(ctx context.Context, req *gin.Context) {
@@ -131,7 +135,8 @@ func (app App) GetOrders(ctx context.Context, req *gin.Context) {
 
 	orderDtoRes, err := app.orderService.GetOrder(context.Background(), int32(orderId), int32(customerId))
 	if err != nil {
-		fmt.Println("Error")
+		utils.WrapperResponse(req, http.StatusBadRequest, err.Error())
+		return
 	}
-	req.JSON(http.StatusCreated, gin.H{"message": orderDtoRes})
+	utils.WrapperResponse(req, http.StatusOK, orderDtoRes)
 }

@@ -14,23 +14,22 @@ import (
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq/consumer"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq/producer"
-	"google.golang.org/grpc"
 )
 
 // Injectors from wire.go:
 
-func Initialize(grpc2 *grpc.Server, filePath configs.ConfigFilePath) (*app.App, func(), error) {
+func Initialize(filePath configs.ConfigFilePath) (*app.App, func(), error) {
 	config, err := configs.GetConfigFromYaml(filePath)
 	if err != nil {
 		return nil, nil, err
 	}
 	client := producer.NewClient(config)
 	consumerConsumer := consumer.NewConsumer(config)
-	consumerHandler := consumers.NewHandler(consumerConsumer)
+	consumerHandler := consumers.NewKafkaHandler(consumerConsumer)
 	redis := config.Redis
 	cacheClient := cache.NewRedisClient(redis)
 	kitchenService := service.NewService(cacheClient)
-	appApp := app.NewApp(grpc2, client, consumerHandler, kitchenService)
+	appApp := app.NewApp(client, consumerHandler, kitchenService)
 	return appApp, func() {
 	}, nil
 }

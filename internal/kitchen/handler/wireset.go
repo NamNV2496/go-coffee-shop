@@ -6,5 +6,5 @@ import (
 )
 
 var HandlerWireSet = wire.NewSet(
-	consumers.NewHandler,
+	consumers.NewKafkaHandler,
 )

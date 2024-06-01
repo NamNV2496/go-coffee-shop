@@ -5,6 +5,7 @@ wire:
 	wire ./internal/counter/
 	wire ./internal/kitchen/
 	wire ./internal/batch/
+	wire ./internal/authorization/
 run-product:
 	go run ./cmd/product/main.go
 run-counter:

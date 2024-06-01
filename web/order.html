@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Order</title>
+    <link rel="stylesheet" href="css/main.css" type="text/css">
+    <script src="js/token.js"></script>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="order.html">Order</a></li>
+            <li><a href="payment.html">Payment</a></li>
+            <li><a href="kitchen.html">Kitchen</a></li>
+            <li><a href="item.html">Item</a></li>
+            <li><a href="#">Report</a></li>
+            <li><a href="user.html">User management</a></li>
+        </ul>
+        <button onclick="logout()" id="currerntUser">Logout</button>
+    </nav>
+
+    <h1>Create Order</h1>
+    <form id="createOrderForm">
+        <label for="customerId">Customer ID:</label>
+        <input type="text" id="customerId" name="customerId" required><br><br>
+
+        <div id="orderItems">
+            <!-- Item fields will be dynamically added here -->
+        </div>
+
+        <button type="button" onclick="addItem()">Add Item</button>
+        <button type="button" onclick="createOrder()">Create</button>
+    </form>
+
+    <div id="response"></div>
+
+    <!-- Popup HTML -->
+    <div id="itemPopup" class="popup">
+        <div class="popup-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <!-- Include the "Search Items" HTML code here -->
+            <!-- For simplicity, I'll use a placeholder -->
+            <h1>Search Items</h1>
+            <form id="searchForm">
+                <label for="id">ID:</label>
+                <input type="text" id="id" name="id">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name">
+                <button type="button" onclick="searchItems()">Search</button>
+            </form>
+            
+            <h2>Results</h2>
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>Type</th>
+                        <th>Image</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <script>
+                async function searchItems() {
+                    const id = document.getElementById('id').value;
+                    const name = document.getElementById('name').value;
+
+                    const url = new URL('http://localhost:8081/api/v1/getItems');
+                    if (id) url.searchParams.append('id', id);
+                    if (name) url.searchParams.append('name', name);
+
+                    try {
+                        const response = await fetch(url, {
+                            method: "GET",
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+                        const data = await response.json();
+
+                        const tableBody = document.getElementById('resultsTable').querySelector('tbody');
+                        tableBody.innerHTML = '';
+
+                        if (data.message && data.message.length > 0) {
+                            for (const item of data.message) {
+                                const row = document.createElement('tr');
+                                let imageUrl = await getImagePreview(item.Image);
+                                row.innerHTML = `
+                                    <td>${item.Id}</td>
+                                    <td>${item.Name}</td>
+                                    <td>${item.Price}</td>
+                                    <td>${item.Type}</td>
+                                    <td id="imageDisplay"><img src="${imageUrl}" alt="${item.Name}" style="max-width: 100px; max-height: 100px;"></td>
+                                    <td><a href="#" onclick="fillItemName('${item.Id}', '${item.Name}', '${item.Price}')">Select</a></td>
+                                `;
+                                tableBody.appendChild(row);
+                            }
+                        } else {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `<td colspan="6">No results found</td>`;
+                            tableBody.appendChild(row);
+                        }
+                    } catch (error) {
+                        console.error('Error fetching data:', error);
+                        alert('Failed to fetch data');
+                    }
+                }
+
+                async function getImagePreview(name) {
+                    const url = new URL('http://localhost:8080/api/v1/product');
+                    if (name) url.searchParams.append('name', name);
+                    try {
+                        const response = await fetch(url, {
+                            method: "GET",
+                            headers: {
+                                'Authorization': `Bearer ${token}`
+                            }
+                        });
+                        const data = await response.json();
+                        return data.message; // Adjust this if the actual image URL field name is different
+                    } catch (error) {
+                        console.error('Error fetching data:', error);
+                    }
+                }
+
+                function fillItemName(id, name, price) {
+                    const itemCount = document.querySelectorAll('[id^="itemId"]').length + 1;
+                    document.getElementById(`itemId${itemCount - 1}`).value = id;
+                    document.getElementById(`itemName${itemCount - 1}`).value = name;
+                    document.getElementById(`price${itemCount - 1}`).value = price;
+                    closePopup();
+                }
+            </script>
+
+        </div>
+    </div>
+
+    <script>
+        let itemCount = 1;
+
+        function addItem() {
+            const container = document.getElementById('orderItems');
+            const itemFields = `
+                <div id="items">
+                    <label for="itemId${itemCount}">Item ID ${itemCount}:</label>
+                    <input type="text" id="itemId${itemCount}" name="${itemCount}" onclick="showPopup()">
+                    <label for="itemName${itemCount}">Item Name:</label>
+                    <input type="text" id="itemName${itemCount}" name="itemName${itemCount}" onclick="showPopup()">
+                    <label for="quantity${itemCount}">Quantity:</label>
+                    <input type="text" id="quantity${itemCount}" name="quantity${itemCount}" required>
+                    <label for="price${itemCount}">Price:</label>
+                    <input type="text" id="price${itemCount}" name="price${itemCount}" required>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', itemFields);
+            itemCount++;
+        }
+
+        function removeItem(id) {
+            const item = document.getElementById(`item${id}`);
+            item.parentNode.removeChild(item);
+        }
+
+        function createOrder() {
+            // Your create order logic here
+            // This function is just a placeholder for demonstration
+            // Gather data from form fields
+            const customerId = document.getElementById('customerId').value;
+            if (customerId == "") {
+                alert('Please insert customerId');
+                return;
+            }
+            const orderItems = [];
+
+            // Loop through each item field to gather item data
+            for (let i = 1; i < itemCount; i++) {
+                const itemId = document.getElementById(`itemId${i}`).value;
+                const quantity = document.getElementById(`quantity${i}`).value;
+                if (quantity == "") {
+                    alert('Please insert quantity');
+                    return;
+                }
+                const price = document.getElementById(`price${i}`).value;
+
+                // Only add item if all fields are filled
+                if (itemId && quantity && price) {
+                    orderItems.push({
+                        "ItemId": parseInt(itemId),
+                        "Quantity": parseInt(quantity),
+                        "Price": parseInt(price)
+                    });
+                }
+            }
+
+            // Construct the request body
+            const requestBody = {
+                "customerId": parseInt(customerId),
+                "OrderItems": orderItems
+            };
+            console.log(requestBody)
+
+            // Send the POST request to the backend API
+            fetch('http://localhost:8081/api/v1/createOrder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                    
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // If there's an error, show an error message
+                    alert('Failed to create order. Please try again.');
+                } else {
+                    alert('Created order done');
+                    window.location.reload();
+                }
+            })
+            .catch(error => {
+                console.error('Error creating order:', error);
+                alert('Failed to create order. Please try again.');
+            });
+            // alert('Order created successfully!');
+        }
+
+        function showPopup() {
+            document.getElementById('itemPopup').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('itemPopup').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

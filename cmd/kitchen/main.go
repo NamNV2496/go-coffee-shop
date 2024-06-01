@@ -2,22 +2,18 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
-	"strconv"
 	"syscall"
 
 	"github.com/gin-gonic/gin"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/kitchen/app"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/security"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/utils"
-	"google.golang.org/grpc"
 )
 
 func main() {
-	grpc := grpc.NewServer()
-	defer grpc.GracefulStop()
-	app, cleanup, err := kitchen.Initialize(grpc, "")
+	app, cleanup, err := kitchen.Initialize("")
 	if err != nil {
 		panic("fail to start kitchen")
 	}
@@ -31,7 +27,8 @@ func main() {
 		r := SetupGin()
 		rounting(context.Background(), app, r)
 		// Run Gin server
-		r.Run(":8082")
+		http.ListenAndServe(":8082", r)
+		// r.Run(":8082")
 	}()
 	utils.BlockUntilSignal(syscall.SIGINT, syscall.SIGTERM)
 }
@@ -41,7 +38,7 @@ func SetupGin() *gin.Engine {
 	r.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 
 		// Respond with 200 OK status
@@ -52,43 +49,13 @@ func SetupGin() *gin.Engine {
 
 func rounting(ctx context.Context, app *app.App, r *gin.Engine) {
 	// Update order status by customerId and itemId
-	r.PUT("/api/v1/updateOrderStatus", func(req *gin.Context) {
-		id := req.Query("customerId")
-		idConv, err := strconv.Atoi(id)
-		if err != nil {
-			panic("Invalid input")
-		}
-		itemId := req.Query("itemId")
-		itemConv, err := strconv.Atoi(itemId)
-		if err != nil {
-			panic("Invalid input")
-		}
-		cockStatus := req.Query("finished")
-		finishedConv, err := strconv.Atoi(cockStatus)
-		if err != nil {
-			panic("Invalid input")
-		}
-		app.KitchenService.UpdateStatusOrderToRedis(ctx, int32(idConv), int32(itemConv), int32(finishedConv))
-	})
-	r.GET("/api/v1/getOrdersByCustomerId", func(req *gin.Context) {
-		id := req.Query("customerId")
-		idConv, err := strconv.Atoi(id)
-		if err != nil {
-			panic("Invalid input")
-		}
-		data, err := app.KitchenService.GetCustomerOrderInRedis(ctx, int32(idConv))
-		if err != nil {
-			panic("Error when get order")
-		}
-		fmt.Println(data)
-		req.JSON(http.StatusCreated, gin.H{"message": data})
-	})
-	r.GET("/api/v1/getOrders", func(req *gin.Context) {
 
-		data, err := app.KitchenService.GetOrderInRedis(ctx)
-		if err != nil {
-			panic("Error when get order")
-		}
-		req.JSON(http.StatusCreated, gin.H{"message": data})
-	})
+	kitchenRoutes := r.Group("/api/v1")
+	kitchenRoutes.Use(security.JWTAuthWithRole([]string{"kitchen", "admin"}))
+	kitchenRoutes.PUT("/updateOrderStatus", func(req *gin.Context) { app.UpdateOrderStatus(ctx, req) })
+
+	memberRoutes := r.Group("/api/v1")
+	memberRoutes.Use(security.JWTAuthWithRole([]string{"kitchen", "admin", "counter"}))
+	memberRoutes.GET("/getOrdersByCustomerId", func(req *gin.Context) { app.GetOrdersByCustomerId(ctx, req) })
+	memberRoutes.GET("/getOrders", func(req *gin.Context) { app.GetOrders(ctx, req) })
 }

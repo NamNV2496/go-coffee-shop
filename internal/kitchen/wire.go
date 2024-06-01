@@ -10,15 +10,15 @@ import (
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/cache"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/mq"
-	"google.golang.org/grpc"
 )
 
-func Initialize(grpc *grpc.Server, filePath configs.ConfigFilePath) (*app.App, func(), error) {
+func Initialize(filePath configs.ConfigFilePath) (*app.App, func(), error) {
 
 	wire.Build(
 		configs.ConfigWireSet,
 		mq.MQWireSet,
 		cache.CacheWireSet,
+
 		handler.HandlerWireSet,
 		service.ServiceWireSet,
 		app.NewApp,

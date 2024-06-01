@@ -3,7 +3,6 @@ package cache
 import (
 	"context"
 	"errors"
-	"sync"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -86,9 +85,4 @@ func (c redisClient) IsDataInSet(ctx context.Context, key string, data any) (boo
 	}
 
 	return result, nil
-}
-
-type inMemoryClient struct {
-	cache      map[string]any
-	cacheMutex *sync.Mutex
 }

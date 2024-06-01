@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/app"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/security"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/utils"
 	"google.golang.org/grpc"
 )
@@ -21,7 +22,8 @@ func main() {
 		ctx := context.Background()
 		r := ginSetup()
 		rounting(ctx, app, r)
-		r.Run(":8080")
+		http.ListenAndServe(":8080", r)
+		// r.Run(":8080")
 
 	}()
 	err = app.Start()
@@ -36,7 +38,7 @@ func ginSetup() *gin.Engine {
 	r.Use(func(c *gin.Context) {
 		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "*")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 
 		// Respond with 200 OK status
@@ -46,6 +48,8 @@ func ginSetup() *gin.Engine {
 }
 
 func rounting(ctx context.Context, app *app.App, r *gin.Engine) {
-	r.POST("/api/v1/product", func(req *gin.Context) { app.AddNewProduct(ctx, req) })
-	r.GET("/api/v1/product", func(req *gin.Context) { app.GetImageInMinio(ctx, req) })
+	publicRoutes := r.Group("/api/v1/product")
+	publicRoutes.Use(security.JWTAuthWithRole([]string{"admin"}))
+	publicRoutes.POST("", func(req *gin.Context) { app.AddNewProduct(ctx, req) })
+	publicRoutes.GET("", func(req *gin.Context) { app.GetImageInMinio(ctx, req) })
 }

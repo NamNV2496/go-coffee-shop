@@ -1,0 +1,185 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get User Information</title>
+    <link rel="stylesheet" href="css/main.css" type="text/css">
+    <script src="js/token.js"></script>
+    <style>
+        #body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            margin-top: 2%;
+            margin-left: 30%;
+            width: 30%;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #333;
+        }
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin: 5px 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        /* button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        } */
+        button:hover {
+            background-color: #45a049;
+        }
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="order.html">Order</a></li>
+            <li><a href="payment.html">Payment</a></li>
+            <li><a href="kitchen.html">Kitchen</a></li>
+            <li><a href="item.html">Item</a></li>
+            <li><a href="#">Report</a></li>
+            <li><a href="user.html">User management</a></li>
+        </ul>
+        <button onclick="logout()" id="currerntUser">Logout</button>
+    </nav>
+
+    <div class="container">
+        <h2>Get User Information</h2>
+        <form id="getUserForm">
+            <label for="userId">User ID:</label>
+            <input type="text" id="userId" name="userId" required>
+            <button type="button" onclick="fetchUserData()">Get User</button>
+        </form>
+        <div id="response"></div>
+    </div>
+
+    <script>
+        token = sessionStorage.getItem('token');
+      
+        async function fetchUserData() {
+            console.log("get data");
+            const userId = document.getElementById('userId').value;
+            const response = await fetch(`http://localhost:8083/api/v1/getUser?userId=${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await response.json();
+            console.log(data.message);
+            if (data.code == "407") {
+                renewToken();
+            } else if (data.code == 200) {
+                populateForm(data.message);
+            }
+        }
+
+        function populateForm(data) {
+            const responseDiv = document.getElementById('response');
+            responseDiv.innerHTML = ''; // Clear previous content
+
+            // Create a form to hold the input fields
+            const form = document.createElement('form');
+            form.id = 'userDataForm';
+            form.onsubmit = updateUserData; // Set the submit event handler
+
+            // Loop through the data object and create input fields
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    const label = document.createElement('label');
+                    label.for = key;
+                    label.textContent = key.charAt(0).toUpperCase() + key.slice(1) + ':';
+
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.id = key;
+                    input.name = key;
+                    input.value = data[key];
+
+                    form.appendChild(label);
+                    form.appendChild(input);
+                    form.appendChild(document.createElement('br')); // Add a line break for better layout
+                }
+            }
+
+            // Add the submit button
+            const submitButton = document.createElement('button');
+            submitButton.type = 'submit';
+            submitButton.textContent = 'Update User';
+            form.appendChild(submitButton);
+
+            responseDiv.appendChild(form);
+        }
+
+        async function updateUserData(event) {
+            event.preventDefault(); // Prevent the form from submitting the default way
+            const form = document.getElementById('userDataForm');
+            const formData = new FormData(form);
+            const jsonData = {};
+
+            // Convert form data to JSON object
+
+            formData.forEach((value, key) => {
+                if (key === 'Id' || key === 'Age') {
+                    jsonData[key] =  parseInt(value, 10)
+                } else if (key === 'IsActive') {
+                    jsonData[key] = (value == 'true') ? true : false
+                } else {
+                    jsonData[key] = value;
+                }
+            });
+            console.log(jsonData)
+
+            const response = await fetch('http://localhost:8083/api/v1/updateUser', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(jsonData)
+            });
+
+            const data = await response.json();
+            console.log(data);
+        }
+    </script>
+</body>
+</html>

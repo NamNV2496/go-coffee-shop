@@ -20,7 +20,9 @@
         6. minio - "github.com/minio/minio-go"
         7. gorp_migration - "github.com/rubenv/sql-migrate"
         8. goqu - "github.com/doug-martin/goqu/v9"
-        9. ratelimit - "go.uber.org/ratelimit"
+        9. google wire - "github.com/google/wire"
+        10. ratelimit - "golang.org/x/time/rate"
+        11. bycrypt - "golang.org/x/crypto/bcrypt"
 
 
 # 3. Flow
@@ -35,115 +37,16 @@
 
 ## Please import `coffee-project.postman_collection.json` to your postman and run it
 
+<details APIs>
+<summary>API list</summary>
+
 ### [Counter] View all items
-![alt text](docs/2.png)
 ![alt text](docs/2_1.png)
 ### [Counter] View item by id or by name
-![alt text](docs/3.png)
 ![alt text](docs/3_1.png)
-### [Counter] Create new order status == 1 (processing)
-![alt text](docs/1.png)
-### [Kitchen] view order by customerId to cook
-![alt text](docs/4.png)
-### [Kitchen] view all orders
-![alt text](docs/5.png)
-### [Kitchen] update done some items for any customer by customerId
-![alt text](docs/6.png)
-### [Kitchen] if the `finished` == `quantity` => that item of customer's ordert is done (status = 2)
-![alt text](docs/7.png)
-### [Counter] end the order => payment. Only calculate finished item (either is cancel)
-![alt text](docs/8.png)
-![alt text](docs/10.png)
-In here we only calculate 2 of itemId = 1, cancel 8 of itemId = 2 and 19 of itemId = 3
-![alt text](docs/9.png)
-### [Counter] get completed orders
-![alt text](docs/11.png)
-### [Product] Add new items
-![alt text](docs/12.png)
-### [Product] get image of item
-![alt text](docs/13.png)
+</details>
 
-# 5. APIS
-
-## Kitchen
-```bash
-# get all customerOrder at today
-curl --location --request GET 'http://localhost:8082/api/v1/getOrders'
-
-# get customerOrder by customerId
-curl --location --request GET 'http://localhost:8082/api/v1/getOrdersByCustomerId?customerId=2'
-
-# update finish order item from kitchen side
-curl --location --request PUT 'http://localhost:8082/api/v1/updateOrderStatus?customerId=2&itemId=1&finished=1'
-
-```
-
-## counter
-```bash
-# search item to order
-curl --location --request GET 'http://localhost:8081/api/v1/getItems?id=4&name=thịt'
-
-
-# create temporary order
-curl --location --request POST 'http://localhost:8081/api/v1/createOrder' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "customerId": 2,
-    "OrderItems": [
-        {
-            "ItemId": 1,
-            "Quantity": 1,
-            "Price": 100
-        },
-        {
-            "ItemId": 2,
-            "Quantity": 1,
-            "Price": 300
-        }
-    ]
-}'
-
-# getorders by orderId or customerId
-
-curl --location --request GET 'http://localhost:8081/api/v1/getOrders?orderId=1&customerId=2'
-
-# payment done for customer (save to DB)
-curl --location --request POST 'http://localhost:8081/api/v1/submitOrder?customerId=2' \
---header 'Content-Type: application/json' \
---data-raw '{
-    "customerId": 2,
-    "OrderItems": [
-        {
-            "ItemId": 1,
-            "Quantity": 1,
-            "Price": 100
-        },
-        {
-            "ItemId": 2,
-            "Quantity": 1,
-            "Price": 300
-        }
-    ]
-}'
-```
-
-## Product 
-
-```bash
-# add new item
-curl --location --request POST 'http://localhost:8080/api/v1/product' \
---form 'file=@"/C:/Users/vanna/Downloads/3_networking24.png"' \
---form 'name="nem rán"' \
---form 'price="500"' \
---form 'type="0"'
-
-# get image
-
-curl --location --request GET 'http://localhost:8080/api/v1/product?name=image_file_nem_rán.png'
-```
-
-
-# 6. Migration sql
+# 5. Migration sql
 
 1. Create sql file
 2. Run UP to call up migration
@@ -162,7 +65,28 @@ gorp_migrations to save sql file. Check changelog and build if the file is chang
 
 ![gorp_migrations](docs/migrateDB.png)
 
-# 7. Dockerfile
+# 6. Authorization
+
+When you call login the API will response 2 token:
+- token (main token)
+- refreshToken (token with longer expired time. It can help renew token when the main token is expired)
+
+I you meet httpCode = 407 please call API `/api/v1/renewToken`
+
+```json
+{
+    "code": 200,
+    "message": {
+        "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTczMDMzMDksInJvbGVzIjpbIm1lbWJlciJdLCJ1c2VySWQiOiJuYW1udiJ9.PX7DvULwCDwYsy_0UdUx21AXLBS4WV-x--E1wFv-LtI",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MTcyOTYzMzksImlhdCI6MTcxNzI5NjMwOSwicm9sZXMiOlsibWVtYmVyIl0sInVzZXJJZCI6Im5hbW52In0.TEH-1oX5PrXpCNBWf4EoPVpCGVAkb1DVezzMtYEC8fU"
+    },
+    "status": "OK"
+}
+```
+
+![authorizations](docs/authorizations.png)
+
+# 9. Dockerfile
 
 locate in `root` dictory
 

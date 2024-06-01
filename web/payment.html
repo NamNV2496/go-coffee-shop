@@ -6,6 +6,7 @@
     <title>Payment</title>
     
     <link rel="stylesheet" href="css/main.css" type="text/css">
+    <script src="js/token.js"></script>
     <style>
         table {
             width: 100%;
@@ -23,12 +24,14 @@
 <body>
     <nav>
         <ul>
-            <li><a href="index.html">Order</a></li>
+            <li><a href="order.html">Order</a></li>
             <li><a href="payment.html">Payment</a></li>
             <li><a href="kitchen.html">Kitchen</a></li>
             <li><a href="item.html">Item</a></li>
             <li><a href="#">Report</a></li>
+            <li><a href="user.html">User management</a></li>
         </ul>
+        <button onclick="logout()" id="currerntUser">Logout</button>
     </nav>
 
     <h1>Payment</h1>
@@ -71,7 +74,10 @@
             
             try {
                 const response = await fetch(url, {
-                    method:'POST'
+                    method:'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
                 const responseData = await response.json();
             } catch (error) {
@@ -96,7 +102,12 @@
             }
 
             try {
-                const response = await fetch(url);
+                const response = await fetch(url, {
+                    method:'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    }
+                });
                 const responseData = await response.json();
 
                 const tableBody = document.getElementById('resultsTable').querySelector('tbody');
@@ -105,8 +116,6 @@
                 // Calculate total
                 let totalAmount = 0;
                 if (getAll == true && responseData.message && responseData.message.length > 0 ) {
-
-
                     responseData.message.forEach(data => {
                         let customerId = data.customerId;
                         data.RedisOrders.forEach(item => {
@@ -146,9 +155,6 @@
                     row.innerHTML = `<td colspan="5">No results found</td>`;
                     tableBody.appendChild(row);
                 }
-
-
-
 
                 // Update total display
                 const totalElement = document.getElementById('total');

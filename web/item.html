@@ -8,6 +8,7 @@
     <title>Item management</title>
     
     <link rel="stylesheet" href="css/main.css" type="text/css">
+    <script src="js/token.js"></script>
     <style>
         #body {
             font-family: Arial, sans-serif;
@@ -51,7 +52,7 @@
             box-sizing: border-box;
         }
 
-        button {
+        /* button {
             width: 100%;
             padding: 10px;
             background-color: #28a745;
@@ -60,7 +61,7 @@
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
-        }
+        } */
 
         button:hover {
             background-color: #218838;
@@ -70,12 +71,14 @@
 <body>
     <nav>
         <ul>
-            <li><a href="index.html">Order</a></li>
+            <li><a href="order.html">Order</a></li>
             <li><a href="payment.html">Payment</a></li>
             <li><a href="kitchen.html">Kitchen</a></li>
             <li><a href="item.html">Item</a></li>
             <li><a href="#">Report</a></li>
+            <li><a href="user.html">User management</a></li>
         </ul>
+        <button onclick="logout()" id="currerntUser">Logout</button>
     </nav>
     <h1>Add new item</h1>
     <div id="body">
@@ -107,11 +110,11 @@
                 body: formData
             })
             .then(response => {
-                if (response.ok) {
+                if (response.code == 200) {
                     alert('Add item successfully');
                     location.reload();
                 } else {
-                    alert('Failed to submit form');
+                    alert("Your account doesn't have permission");
                 }
             })
             .catch(error => {

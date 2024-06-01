@@ -6,6 +6,7 @@
     <title>Kitchen</title>
     
     <link rel="stylesheet" href="css/main.css" type="text/css">
+    <script src="js/token.js"></script>
     <style>
         table {
             width: 100%;
@@ -23,19 +24,21 @@
 <body>
     <nav>
         <ul>
-            <li><a href="index.html">Order</a></li>
+            <li><a href="order.html">Order</a></li>
             <li><a href="payment.html">Payment</a></li>
             <li><a href="kitchen.html">Kitchen</a></li>
             <li><a href="item.html">Item</a></li>
             <li><a href="#">Report</a></li>
+            <li><a href="user.html">User management</a></li>
         </ul>
+        <button onclick="logout()" id="currerntUser">Logout</button>
     </nav>
 
     <h1>Kitchen</h1>
     <form id="searchForm">
         <label for="id">CustomerID:</label>
         <input type="text" id="id" name="id">
-        <button type="button" onclick="searchItems()">Search</button>
+        <button type="button" onclick="searchCusomers()">Search</button>
     </form>
     
     <h2>Results</h2>
@@ -58,23 +61,29 @@
     <script>
 
         async function updateItem(customerId, itemId) {
-            alert("Updated")
             const url = new URL('http://localhost:8082/api/v1/updateOrderStatus');
             if (customerId) url.searchParams.append('customerId', customerId);
             if (itemId) url.searchParams.append('itemId', itemId);
             url.searchParams.append('finished', 1);
             try {
                 const response = await fetch(url, {
-                    method:'PUT'
+                    method:'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 });
                 const responseData = await response.json();
+                if (response.code == 401) {
+                    alert("User không có quyền")
+                }
             } catch {
-
+                
             }
-            location.reload()
+            alert("Updated")
+            // location.reload()
         }
 
-        async function searchItems() {
+        async function searchCusomers() {
             let itemCount = 1;
             const id = document.getElementById('id').value;
             let url = "";
@@ -88,7 +97,12 @@
             }
 
             try {
-                const response = await fetch(url);
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
                 const responseData = await response.json();
 
                 const tableBody = document.getElementById('resultsTable').querySelector('tbody');
@@ -124,6 +138,7 @@
                             <td>${item.quantity}</td>
                             <td>${item.finshed}</td>
                             <td style="font-weight: bold; text-align: center; font-size: 24px">${getStatusText(item.status)}</td>
+                            <a href="#" onclick="updateItem('${customerId}', '${item.itemId}')">Update</a>
                         `;
                         itemCount += 1
                         tableBody.appendChild(row);

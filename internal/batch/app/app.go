@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-co-op/gocron/v2"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/batch/handler/jobs"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/utils"
 )
 
 type AppInterface interface {
@@ -85,5 +87,6 @@ func (app App) startScheduler(ctx context.Context) error {
 func (app App) TriggerJob(ctx context.Context, req *gin.Context) {
 	fmt.Println("Trigger job report")
 	app.jobs.Run(ctx)
+	utils.WrapperResponse(req, http.StatusOK, "")
 	// add generate pdf file
 }
