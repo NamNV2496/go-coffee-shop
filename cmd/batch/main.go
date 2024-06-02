@@ -24,7 +24,7 @@ func main() {
 
 	go func() {
 		routing(app, r, context.Background())
-		r.Run(":8081")
+		r.Run(":8084")
 	}()
 	utils.BlockUntilSignal(syscall.SIGINT, syscall.SIGTERM)
 }

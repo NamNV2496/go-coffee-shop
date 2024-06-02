@@ -44,7 +44,7 @@ func (itemRepo *itemRepo) GetAll(
 		ScanStructsContext(ctx, &itemList)
 
 	if err != nil {
-		return nil, status.Error(codes.Internal, "failed to create account")
+		return nil, err
 	}
 	return itemList, nil
 }

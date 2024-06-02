@@ -11,6 +11,7 @@ import (
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/cache"
 	configs "github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
 	data_access "github.com/namnv2496/go-coffee-shop-demo/pkg/data_access"
+	"github.com/namnv2496/go-coffee-shop-demo/pkg/s3"
 )
 
 func Initialize(filePath configs.ConfigFilePath) (*app.App, func(), error) {
@@ -19,6 +20,7 @@ func Initialize(filePath configs.ConfigFilePath) (*app.App, func(), error) {
 		configs.ConfigWireSet,
 		data_access.DataWireSet,
 		cache.CacheWireSet,
+		s3.FileWireSet,
 		handler.HandlerWireSet,
 		repo.RepoWireSet,
 		service.ServiceWireSet,

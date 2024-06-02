@@ -5,6 +5,5 @@ import (
 )
 
 var RepoWireSet = wire.NewSet(
-	NewCustomerRepo,
 	NewOrderRepo,
 )

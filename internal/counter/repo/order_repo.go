@@ -3,6 +3,7 @@ package repo
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/doug-martin/goqu/v9"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/counter/domain"
@@ -41,9 +42,9 @@ func (order orderRepo) CreateOrder(ctx context.Context, orders []domain.OrderIte
 
 	query := order.database.
 		Insert(domain.TabNameOrder).
-		Cols(domain.ColCustomerId, domain.ColTotalAmount, domain.ColStatus).
+		Cols(domain.ColCustomerId, domain.ColTotalAmount, domain.ColStatus, domain.ColCreatedDate).
 		Vals(
-			goqu.Vals{customerId, totalAmount, enums.Ordering.Code},
+			goqu.Vals{customerId, totalAmount, enums.Ordering.Code, time.Now()},
 		)
 
 	result, err := query.Executor().ExecContext(ctx)
@@ -63,11 +64,11 @@ func addOrderItems(database *goqu.Database, orders []domain.OrderItem, id int32)
 
 	var vals [][]interface{}
 	for _, order := range orders {
-		vals = append(vals, []interface{}{id, order.ItemId, order.Quantity, order.Price})
+		vals = append(vals, []interface{}{id, order.ItemId, order.Quantity, order.Price, time.Now()})
 	}
 	query := database.
 		Insert(domain.TabNameOrderItem).
-		Cols(domain.ColOrderId, domain.ColItemId, domain.ColQuantity, domain.ColPrice).
+		Cols(domain.ColOrderId, domain.ColItemId, domain.ColQuantity, domain.ColPrice, domain.ColCreatedDate).
 		Vals(vals...)
 
 	// query := order.database.

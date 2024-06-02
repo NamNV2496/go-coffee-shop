@@ -20,8 +20,8 @@ cron:
   clear_all_order:
     # schedule: "@every 24h"
     # schedule: "1 * * * *"
-    hour: 14
-    minute: 13
+    hour: 23
+    minute: 30
 
 s3:
   mode: s3

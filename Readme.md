@@ -6,6 +6,8 @@
         4. run counter-service `make run-counter`
         5. run kitchen-service `make run-kitchen`
         6. run product-service `make run-product`
+        7. run authorization-service `make run-authorization`
+        8. run batch-service `make run-batch`
 
 ![alt text](docs/minio.png)
 
@@ -23,9 +25,18 @@
         9. google wire - "github.com/google/wire"
         10. ratelimit - "golang.org/x/time/rate"
         11. bycrypt - "golang.org/x/crypto/bcrypt"
+        12. gopdf - "github.com/jung-kurt/gofpdf"
 
 
 # 3. Flow
+
+Project structure
+
+        1. authorization-service: for login/register authen, author
+        2. counter-service: for receptionist to make order, find items and payment
+        3. kitchen-service: kitchen process (in here I made it easily to view order and update finished order)
+        4. product-service: manage all product of coffee store
+        5. batch-service: to run end of day to make report (you can trigger it by manual)
 
 ![alt text](docs/flow.png)
 
@@ -37,16 +48,7 @@
 
 ## Please import `coffee-project.postman_collection.json` to your postman and run it
 
-<details APIs>
-<summary>API list</summary>
-
-### [Counter] View all items
-![alt text](docs/2_1.png)
-### [Counter] View item by id or by name
-![alt text](docs/3_1.png)
-</details>
-
-# 5. Migration sql
+# 5. Migration sql (auto run when start)
 
 1. Create sql file
 2. Run UP to call up migration
@@ -86,7 +88,7 @@ I you meet httpCode = 407 please call API `/api/v1/renewToken`
 
 ![authorizations](docs/authorizations.png)
 
-# 9. Dockerfile
+<!-- # 9. Dockerfile
 
 locate in `root` dictory
 
@@ -96,4 +98,4 @@ docker build -t counter-service -f cmd/counter/Dockerfile .
 docker build -t kitchen-service -f cmd/kitchen/Dockerfile .
 
 docker build -t product-service -f cmd/product/Dockerfile .
-```
+``` -->

@@ -5,5 +5,5 @@ import (
 )
 
 var ServiceWireSet = wire.NewSet(
-	NewOrderService,
+	NewBatchService,
 )

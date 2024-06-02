@@ -12,6 +12,10 @@ run-counter:
 	go run ./cmd/counter/main.go
 run-kitchen:
 	go run ./cmd/kitchen/main.go
+run-batch:
+	go run ./cmd/batch/main.go
+run-authorization:
+	go run ./cmd/authorization/main.go
 docker:
 	# docker-compose -f docker-compose.dev.yml up
 	docker-compose up

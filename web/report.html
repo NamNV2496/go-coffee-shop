@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment</title>
+    
+    <link rel="stylesheet" href="css/main.css" type="text/css">
+    <script src="js/token.js"></script>
+
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="order.html">Order</a></li>
+            <li><a href="payment.html">Payment</a></li>
+            <li><a href="kitchen.html">Kitchen</a></li>
+            <li><a href="item.html">Item</a></li>
+            <li><a href="report.html">Report</a></li>
+            <li><a href="user.html">User management</a></li>
+        </ul>
+        <button onclick="logout()" id="currerntUser">Logout</button>
+    </nav>
+
+    <h1>Report</h1>
+    <form id="searchForm">
+        <label for="id">Report date:</label>
+        <input type="date" id="reportDate" name="reportDate">
+        <button type="button" onclick="searchReport()">Search</button>
+    </form>
+    <iframe id="pdfFrame" src="" width="700" height="1000" style="margin-left: 10%;"></iframe>
+    
+    <script>
+        async function searchReport() {
+            const dateInput = document.getElementById("reportDate").value;
+            const reportDate = "report_" + dateInput + ".pdf";
+            console.log(reportDate);
+
+            const url = new URL('http://localhost:8080/api/v1/product');
+            if (reportDate) url.searchParams.append('name', reportDate);
+
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const responseText = await response.text();;
+                console.log(responseText)
+                if (responseText) {
+                    const jsonParse = JSON.parse(responseText);
+                    
+                    console.log(jsonParse.message)
+                    document.getElementById('pdfFrame').src = jsonParse.message;
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+    </script>
+</body>
+</html>

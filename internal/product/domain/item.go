@@ -1,6 +1,10 @@
 package domain
 
-import "github.com/doug-martin/goqu/v9"
+import (
+	"time"
+
+	"github.com/doug-martin/goqu/v9"
+)
 
 var (
 	TabNameItem = goqu.T("items")
@@ -12,9 +16,10 @@ var (
 )
 
 type Item struct {
-	Id    int32  `json:"id"`
-	Name  string `json:"name"`
-	Price int32  `json:"price"`
-	Type  int32  `json:"type"`
-	Img   string `json:"img"`
+	Id          int32     `json:"id"`
+	Name        string    `json:"name"`
+	Price       int32     `json:"price"`
+	Type        int32     `json:"type"`
+	Img         string    `json:"img"`
+	CreatedDate time.Time `db:"created_date" goqu:"omitnil"`
 }

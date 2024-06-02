@@ -70,6 +70,7 @@ require (
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/joho/godotenv v1.5.1
+	github.com/jung-kurt/gofpdf v1.16.2
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/rubenv/sql-migrate v1.6.1
 	golang.org/x/net v0.25.0 // indirect

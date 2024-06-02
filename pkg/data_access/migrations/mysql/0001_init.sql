@@ -8,6 +8,7 @@ CREATE TABLE IF NOT exists customer (
     name varchar(50),
     age int,
     loyalty_point int,
+    created_date timestamp,
     PRIMARY KEY (id)
 );
 
@@ -16,7 +17,8 @@ CREATE TABLE IF NOT exists items (
     name varchar(50),
     price int,
     type int,
-    img varchar(255), 
+    img varchar(255),
+    created_date timestamp,
     PRIMARY KEY (id)
 );
 
@@ -25,6 +27,7 @@ CREATE TABLE IF NOT exists orders (
     customer_id int,
     total_amount int,
     status int,
+    created_date timestamp,
     PRIMARY KEY (id)
 );
 
@@ -34,6 +37,7 @@ CREATE TABLE IF NOT exists order_item (
     item_id int,
     quantity int,
     price int,
+    created_date timestamp,
     PRIMARY KEY (id)
 );
 
@@ -51,15 +55,15 @@ CREATE TABLE IF NOT exists user (
     PRIMARY KEY (id)
 );
 
-INSERT INTO items (id,`name`,price,`type`, img) VALUES
-	 (1,'trà đào cam xả',50,1, "1"),
-	 (2,'cà phê đen',35,1, "2");
+INSERT INTO items (id,`name`,price,`type`, img, created_date) VALUES
+	 (1,'trà đào cam xả',50,1, "1", "2014-01-06 18:36:00"),
+	 (2,'cà phê đen',35,1, "2", "2014-01-06 18:36:00");
 
-INSERT INTO customer (id,`name`, age, loyalty_point) VALUES
-	 (1,'Nguyễn văn a', 50, 10),
-	 (2,'trần văn B', 24, 100),
-	 (3,'La thị C', 35, 20),
-	 (4,'Phạm văn D', 40, 0);
+INSERT INTO customer (id,`name`, age, loyalty_point, created_date) VALUES
+	 (1,'Nguyễn văn a', 50, 10, "2014-01-06 18:36:00"),
+	 (2,'trần văn B', 24, 100, "2014-01-06 18:36:00"),
+	 (3,'La thị C', 35, 20, "2014-01-06 18:36:00"),
+	 (4,'Phạm văn D', 40, 0, "2014-01-06 18:36:00");
 
 INSERT INTO user (id, user_id, `name`, `password`, age, position, email, is_active, `role`, created_date) VALUES
 	 (1, "admin", 'Nguyễn văn a', "$2a$10$1joc.H1g998T5NL2/6as9ugfNmWcx4mzkhPL8hIguIPyye6RSlWP2", 50, "Nhân viên quầy", "anv@gmail.com", 1, "admin", "2014-01-06 18:36:00"),

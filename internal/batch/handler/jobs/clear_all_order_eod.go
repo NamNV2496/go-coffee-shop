@@ -12,18 +12,18 @@ type ClearAllOrderEOD interface {
 }
 
 type clearAllOrderEOD struct {
-	orderService service.OrderService
+	batchService service.BatchService
 }
 
 func NewExecuteClearAllOrderEOD(
-	orderService service.OrderService,
+	batchService service.BatchService,
 ) ClearAllOrderEOD {
 	return &clearAllOrderEOD{
-		orderService: orderService,
+		batchService: batchService,
 	}
 }
 
 func (j clearAllOrderEOD) Run(ctx context.Context) error {
 	fmt.Println("Trigger clearAllOrderEOD")
-	return j.orderService.ClearAllOrderEOD(ctx)
+	return j.batchService.ClearAllOrderEOD(ctx)
 }

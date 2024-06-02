@@ -8,6 +8,7 @@ var (
 	ColTotalAmount = "total_amount"
 	ColCustomerId  = "customer_id"
 	ColStatus      = "status"
+	ColCreatedDate = "created_date"
 	ColOrderId     = "order_id"
 	ColPrice       = "price"
 )
