@@ -55,7 +55,10 @@ func (order orderRepo) CreateOrder(ctx context.Context, orders []domain.OrderIte
 	if err != nil {
 		return 0, status.Error(codes.Internal, "failed to create order")
 	}
-	addOrderItems(order.database, orders, int32(lastInsertedID))
+	err = addOrderItems(order.database, orders, int32(lastInsertedID))
+	if err != nil {
+		return 0, err
+	}
 
 	return int32(lastInsertedID), nil
 }
@@ -145,7 +148,9 @@ func (order orderRepo) GetOrderById(ctx context.Context, orderId int32) (domain.
 			goqu.C(domain.ColId).Eq(orderId),
 		)
 	var orders []domain.Order
-	query.ScanStructs(&orders)
+	if err := query.ScanStructs(&orders); err != nil {
+		return domain.Order{}, nil
+	}
 
 	if len(orders) >= 1 {
 		return orders[0], nil
@@ -160,7 +165,9 @@ func (order orderRepo) GetOrderByCustomerId(ctx context.Context, customerId int3
 			goqu.C(domain.ColCustomerId).Eq(customerId),
 		)
 	var orders []domain.Order
-	query.ScanStructs(&orders)
+	if err := query.ScanStructs(&orders); err != nil {
+		return nil, err
+	}
 
 	if len(orders) >= 1 {
 		return orders, nil
@@ -176,7 +183,9 @@ func (order orderRepo) GetOrderItem(ctx context.Context, orderIds []int32) ([]do
 			goqu.C(domain.ColOrderId).In(orderIds),
 		)
 	var orders []domain.OrderItem
-	query.ScanStructs(&orders)
+	if err := query.ScanStructs(&orders); err != nil {
+		return nil, err
+	}
 
 	if len(orders) >= 1 {
 		return orders, nil
@@ -190,7 +199,9 @@ func (order orderRepo) GetOrders(ctx context.Context) ([]domain.Order, error) {
 		From(domain.TabNameOrder)
 
 	var orders []domain.Order
-	query.ScanStructs(&orders)
+	if err := query.ScanStructs(&orders); err != nil {
+		return nil, err
+	}
 	if len(orders) >= 1 {
 		return orders, nil
 	}

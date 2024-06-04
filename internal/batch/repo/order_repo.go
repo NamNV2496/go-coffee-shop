@@ -36,7 +36,9 @@ func (order orderRepo) GetOrderItems(ctx context.Context) ([]domain.OrderItem, e
 		)
 	fmt.Println(query.ToSQL())
 	var orderItems []domain.OrderItem
-	query.Executor().ScanStructsContext(ctx, &orderItems)
+	if err := query.Executor().ScanStructsContext(ctx, &orderItems); err != nil {
+		return nil, err
+	}
 	orderMap := make(map[int32]domain.OrderItem)
 
 	for _, item := range orderItems {

@@ -34,10 +34,10 @@ func Initialize(filePath configs.ConfigFilePath) (*app.App, func(), error) {
 	orderRepo := repo.NewOrderRepo(goquDatabase)
 	redis := config.Redis
 	client := cache.NewRedisClient(redis)
-	batchService := service.NewBatchService(orderRepo, client)
-	clearAllOrderEOD := jobs.NewExecuteClearAllOrderEOD(batchService)
+	batchService := service.NewBatchService(s3Client, orderRepo, client)
 	cron := config.Cron
-	appApp := app.NewApp(s3Client, batchService, clearAllOrderEOD, cron)
+	clearAllOrderEOD := jobs.NewExecuteClearAllOrderEOD(batchService, cron)
+	appApp := app.NewApp(batchService, clearAllOrderEOD)
 	return appApp, func() {
 		cleanup()
 	}, nil

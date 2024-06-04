@@ -21,7 +21,7 @@ type productGRPCClient struct {
 func NewGRPCProductClient(
 	config configs.Config,
 ) (ProductGRPCClient, error) {
-	conn, err := grpc.Dial(config.GRPC.Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.NewClient(config.GRPC.Address, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, err
 	}

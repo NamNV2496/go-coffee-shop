@@ -26,7 +26,9 @@ func main() {
 	defer cleanup()
 	r := SetupGin()
 
-	app.Start()
+	if err := app.Start(); err != nil {
+		return
+	}
 
 	go func() {
 
@@ -35,7 +37,9 @@ func main() {
 		// 100: the maximum frequency of some events. 100 request per second
 		// 500: The limiter can handle a burst of up to 500 requests at once. This means if there has been no traffic for a while, the limiter can accumulate up to 500 "tokens" and allow a burst of up to 50 requests to be processed immediately. After the burst, the limiter will revert to allowing 1 request per second.
 		rl := ratelimit.NewIPRateLimiter(100, 500)
-		http.ListenAndServe(":8081", ratelimit.LimitMiddleware(r, rl))
+		if err := http.ListenAndServe(":8081", ratelimit.LimitMiddleware(r, rl)); err != nil {
+			return
+		}
 		// r.Run(":8081")
 	}()
 	utils.BlockUntilSignal(syscall.SIGINT, syscall.SIGTERM)

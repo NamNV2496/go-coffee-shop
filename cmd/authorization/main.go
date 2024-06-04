@@ -20,12 +20,16 @@ func main() {
 	}
 	defer cleanup()
 	r := SetupGin()
-	app.Start()
+
+	if err := app.Start(); err != nil {
+		return
+	}
 
 	go func() {
-
 		routing(app, r, context.Background())
-		r.Run(":8083")
+		if err := r.Run(":8083"); err != nil {
+			return
+		}
 	}()
 	utils.BlockUntilSignal(syscall.SIGINT, syscall.SIGTERM)
 }
@@ -79,7 +83,7 @@ func routing(app *app.App, r *gin.Engine, ctx context.Context) {
 			if role == "admin" {
 				utils.WrapperResponse(req, http.StatusOK, user)
 				return
-			} else if role == "member" {
+			} else {
 				userId, err := security.GetUserId(req)
 				if err != nil {
 					utils.WrapperResponse(req, http.StatusBadRequest, err.Error())

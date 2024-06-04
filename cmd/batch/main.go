@@ -20,11 +20,15 @@ func main() {
 	defer cleanup()
 	r := SetupGin()
 
-	app.Start()
+	if err := app.Start(); err != nil {
+		return
+	}
 
 	go func() {
 		routing(app, r, context.Background())
-		r.Run(":8084")
+		if err := r.Run(":8084"); err != nil {
+			return
+		}
 	}()
 	utils.BlockUntilSignal(syscall.SIGINT, syscall.SIGTERM)
 }

@@ -35,7 +35,9 @@ func NewApp(
 
 func (a App) Start() error {
 	go func() {
-		a.grpcServer.StartServerGRPC()
+		if err := a.grpcServer.StartServerGRPC(); err != nil {
+			return
+		}
 	}()
 	return nil
 }

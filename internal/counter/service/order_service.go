@@ -166,7 +166,10 @@ func (s orderService) CreateOrder(
 		if ok != nil {
 			return status.Error(codes.Internal, "failed to marshall data into cache")
 		}
-		s.cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
+		err := s.cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
+		if err != nil {
+			return err
+		}
 		return nil
 	}
 	fmt.Println("[TEST] update old order in redis")
@@ -240,7 +243,9 @@ func (s orderService) CreateOrder(
 	if ok != nil {
 		return status.Error(codes.Internal, "failed to marshall data into cache")
 	}
-	s.cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
+	if err := s.cache.Set(ctx, mq.REDIS_KEY_ORDER, json); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -298,7 +303,9 @@ func (s orderService) SubmitOrder(
 			if ok != nil {
 				return 0, status.Error(codes.Internal, "failed to marshall data into cache")
 			}
-			s.cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
+			if err := s.cache.Set(ctx, mq.REDIS_KEY_ORDER, json); err != nil {
+				return 0, err
+			}
 			return s.orderRepo.CreateOrder(ctx, orders, customerId)
 		}
 	}
@@ -323,6 +330,8 @@ func (s orderService) ClearAllOrderEOD(
 	if ok != nil {
 		return status.Error(codes.Internal, "failed to marshall data into cache")
 	}
-	s.cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
+	if err := s.cache.Set(ctx, mq.REDIS_KEY_ORDER, json); err != nil {
+		return err
+	}
 	return nil
 }

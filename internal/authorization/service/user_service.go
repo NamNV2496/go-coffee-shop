@@ -40,8 +40,11 @@ func (s userService) CreateUser(ctx context.Context, user domain.User) (int, err
 	}
 	user.Password = string(passwordHash)
 	user.UserId = html.EscapeString(strings.TrimSpace(user.UserId))
-	s.userRepo.CreateUser(ctx, user)
-	return 0, nil
+	id, err := s.userRepo.CreateUser(ctx, user)
+	if err != nil {
+		return 0, nil
+	}
+	return id, nil
 }
 
 func (s userService) Login(ctx context.Context, user domain.User) ([]string, error) {

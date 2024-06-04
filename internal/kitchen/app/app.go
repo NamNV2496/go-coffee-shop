@@ -40,7 +40,9 @@ func NewApp(
 func (app App) Start() error {
 
 	go func() {
-		app.kafkaHander.StartConsumerUp(context.Background())
+		if err := app.kafkaHander.StartConsumerUp(context.Background()); err != nil {
+			return
+		}
 	}()
 	return nil
 }
@@ -64,7 +66,11 @@ func (app App) UpdateOrderStatus(ctx context.Context, req *gin.Context) {
 		utils.WrapperResponse(req, http.StatusBadRequest, "Invalid input")
 		return
 	}
-	if err := app.KitchenService.UpdateStatusOrderToRedis(ctx, int32(idConv), int32(itemConv), int32(finishedConv)); err != nil {
+	if err := app.KitchenService.UpdateStatusOrderToRedis(
+		ctx, int32(idConv),
+		int32(itemConv),
+		int32(finishedConv),
+	); err != nil {
 		utils.WrapperResponse(req, http.StatusBadRequest, err.Error())
 		return
 	}

@@ -78,7 +78,7 @@ func NewConsumer(
 
 	saramaConsumer, err := sarama.NewConsumerGroup(configs.Kafka.Addresses, configs.Kafka.ClientID, newSaramaConfig(configs.Kafka))
 	if err != nil {
-		fmt.Errorf("failed to create sarama consumer: %w", err)
+		fmt.Println("failed to create sarama consumer: ", err)
 		return nil
 	}
 

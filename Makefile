@@ -19,3 +19,5 @@ run-authorization:
 docker:
 	# docker-compose -f docker-compose.dev.yml up
 	docker-compose up
+lint:
+	golangci-lint run

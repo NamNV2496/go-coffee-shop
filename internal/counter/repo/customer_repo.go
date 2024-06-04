@@ -56,6 +56,8 @@ func (customerrepo customerRepo) GetCustomers(ctx context.Context) ([]domain.Cus
 		From(domain.TabNameCustomer)
 
 	var customers []domain.Customer
-	query.ScanStructs(&customers)
+	if err := query.ScanStructs(&customers); err != nil {
+		return nil, err
+	}
 	return customers, nil
 }

@@ -71,7 +71,9 @@ func (k kitchenService) UpdateStatusOrderToRedis(
 	if ok != nil {
 		return errors.New("failed to marshall data into cache")
 	}
-	k.cache.Set(ctx, mq.REDIS_KEY_ORDER, json)
+	if err := k.cache.Set(ctx, mq.REDIS_KEY_ORDER, json); err != nil {
+		return err
+	}
 	return nil
 }
 

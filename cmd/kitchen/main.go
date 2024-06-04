@@ -27,7 +27,9 @@ func main() {
 		r := SetupGin()
 		rounting(context.Background(), app, r)
 		// Run Gin server
-		http.ListenAndServe(":8082", r)
+		if err := http.ListenAndServe(":8082", r); err != nil {
+			return
+		}
 		// r.Run(":8082")
 	}()
 	utils.BlockUntilSignal(syscall.SIGINT, syscall.SIGTERM)

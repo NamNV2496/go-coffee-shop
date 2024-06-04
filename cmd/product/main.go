@@ -16,13 +16,18 @@ import (
 func main() {
 	server := grpc.NewServer()
 	app, cleanup, err := product.Initialize(server, "")
+	if err != nil {
+		return
+	}
 	defer cleanup()
 
 	go func() {
 		ctx := context.Background()
 		r := ginSetup()
 		rounting(ctx, app, r)
-		http.ListenAndServe(":8080", r)
+		if err := http.ListenAndServe(":8080", r); err != nil {
+			return
+		}
 		// r.Run(":8080")
 
 	}()

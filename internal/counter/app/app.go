@@ -71,8 +71,11 @@ func (app App) CreateOrder(ctx context.Context, req *gin.Context) {
 		return
 	}
 
-	err := app.orderService.CreateOrder(context.Background(), orderList.OrderItems, orderList.CustomerId)
-	if err != nil {
+	if err := app.orderService.CreateOrder(
+		context.Background(),
+		orderList.OrderItems,
+		orderList.CustomerId,
+	); err != nil {
 		utils.WrapperResponse(req, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -83,7 +86,9 @@ func (app App) CreateOrder(ctx context.Context, req *gin.Context) {
 	}
 	go func() {
 		fmt.Println("Call trigger to kitchen: ", orderList)
-		app.producer.Produce(context.Background(), mq.TOPIC_PROCESS_COOK, data)
+		if err := app.producer.Produce(context.Background(), mq.TOPIC_PROCESS_COOK, data); err != nil {
+			return
+		}
 	}()
 	utils.WrapperResponse(req, http.StatusCreated, "")
 }
@@ -108,12 +113,10 @@ func (app App) GetItem(ctx context.Context, req *gin.Context) {
 	id := req.Query("id")
 	name := req.Query("name")
 	num, _ := strconv.Atoi(id)
-	page := 0
-	size := 50
 	pageQuery := req.Query("page")
-	page, _ = strconv.Atoi(pageQuery)
+	page, _ := strconv.Atoi(pageQuery)
 	sizeQuery := req.Query("size")
-	size, _ = strconv.Atoi(sizeQuery)
+	size, _ := strconv.Atoi(sizeQuery)
 	items, err := app.grpcClient.GetProductByIdOrName(int32(num), name, int32(page), int32(size))
 	if err != nil {
 		utils.WrapperResponse(req, http.StatusBadRequest, err.Error())

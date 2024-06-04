@@ -36,7 +36,7 @@ func NewClient(
 		newSaramaConfig(mqConfig.Kafka.ClientID),
 	)
 	if err != nil {
-		fmt.Errorf("failed to create sarama sync producer: %w", err)
+		fmt.Println("failed to create sarama sync producer: ", err)
 		return nil
 	}
 
