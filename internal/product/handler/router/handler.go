@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 
-	grpcpb "github.com/namnv2496/go-coffee-shop-demo/grpc/grpcpb/gen"
+	grpcpb "github.com/namnv2496/go-coffee-shop-demo/api/grpcpb/gen"
 
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/domain"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/service"
 )
 
 type Handler interface {
-	// GetProductByIdOrName(ctx context.Context, request *grpcpb.GetProductsRequest) (*grpcpb.GetProductsResponse, error)
 	GetProducts(ctx context.Context, request *grpcpb.GetProductsRequest) (*grpcpb.GetProductsResponse, error)
 }
 type handler struct {
@@ -27,34 +26,6 @@ func NewHandler(
 		itemService: itemService,
 	}
 }
-
-// func (s handler) GetProductByIdOrName(
-// 	ctx context.Context,
-// 	request *grpcpb.GetProductsRequest,
-// ) (*grpcpb.GetProductsResponse, error) {
-
-// 	var page = request.Page
-// 	var size = request.Size
-
-// 	itemList, err := s.itemService.GetItemByIdOrName(context.Background(), request.Id, request.Name, page, size)
-// 	if err != nil {
-// 		panic("Error when get items: " + string(err.Error()))
-// 	}
-// 	fmt.Println(itemList)
-// 	items := make([]*grpcpb.Item, 0)
-// 	for _, item := range itemList {
-// 		items = append(items, &grpcpb.Item{
-// 			Id:    item.Id,
-// 			Name:  item.Name,
-// 			Price: item.Price,
-// 			Type:  item.Type,
-// 			Image: item.Img,
-// 		})
-// 	}
-// 	return &grpcpb.GetProductsResponse{
-// 		Items: items,
-// 	}, nil
-// }
 
 func (s handler) GetProducts(
 	ctx context.Context,

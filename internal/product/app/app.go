@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/domain"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/product/router"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/product/handler/router"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/service"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/s3"
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/utils"

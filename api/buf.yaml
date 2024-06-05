@@ -8,13 +8,9 @@ lint:
   ignore_only:
     PACKAGE_DIRECTORY_MATCH:
       - product.proto
-      - order.proto
     PACKAGE_VERSION_SUFFIX:
       - product.proto
-      - order.proto
     RPC_REQUEST_RESPONSE_UNIQUE:
       - product.proto
-      - order.proto
     RPC_RESPONSE_STANDARD_NAME:
       - product.proto
-      - order.proto

@@ -4,7 +4,7 @@ package main
 // 	"context"
 // 	"fmt"
 
-// 	grpcpb "github.com/namnv2496/go-coffee-shop-demo/grpc/grpcpb/gen"
+// 	grpcpb "github.com/namnv2496/go-coffee-shop-demo/api/grpcpb/gen"
 // 	"google.golang.org/grpc"
 // 	"google.golang.org/grpc/credentials/insecure"
 // 	"google.golang.org/grpc/grpclog"
@@ -43,7 +43,7 @@ package main
 // 	"log"
 // 	"net/http"
 
-// 	grpcpb "github.com/namnv2496/go-coffee-shop-demo/grpc/grpcpb/gen"
+// 	grpcpb "github.com/namnv2496/go-coffee-shop-demo/api/grpcpb/gen"
 
 // 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 // 	"google.golang.org/grpc"

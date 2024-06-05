@@ -5,18 +5,14 @@ This is a small demo of a coffee shop application for practicing Golang code and
 # 1. How to run
 
         1. `cd deployments/` open cmd: `docker-compose up`
-        2. Access to `https://localhost:9001` on browser and create `coffee` bucket (like picture in below)
-        3. `cd ../`
-        4. run counter-service `make run-counter`
-        5. run kitchen-service `make run-kitchen`
-        6. run product-service `make run-product`
-        7. run authorization-service `make run-authorization`
-        8. run batch-service `make run-batch`
-        9. run html code in: ./web/
+        2. `cd ../` to root directory
+        3. run counter-service `make run-counter`
+        4. run kitchen-service `make run-kitchen`
+        5. run product-service `make run-product`
+        6. run authorization-service `make run-authorization`
+        7. run batch-service `make run-batch`
+        8. run html code in: ./web/
         
-And must create new bucket name `coffee` on minio
-![alt text](docs/minio.png)
-
 This is demo
 ![alt text](docs/3_1.png)
 

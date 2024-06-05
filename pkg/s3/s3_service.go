@@ -28,6 +28,13 @@ func NewS3Client(
 		fmt.Println("failed to create minio client")
 		return nil
 	}
+	if exist, err := minioClient.BucketExists(BUCKETNAME); err != nil && exist {
+		return nil
+	} else {
+		if err = minioClient.MakeBucket(BUCKETNAME, LOCATION); err != nil {
+			return nil
+		}
+	}
 
 	return &s3Client{
 		minioClient: minioClient,

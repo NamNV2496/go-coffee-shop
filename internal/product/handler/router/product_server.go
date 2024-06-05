@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net"
 
-	grpcpb "github.com/namnv2496/go-coffee-shop-demo/grpc/grpcpb/gen"
+	grpcpb "github.com/namnv2496/go-coffee-shop-demo/api/grpcpb/gen"
 
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
 	"google.golang.org/grpc"

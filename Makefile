@@ -1,5 +1,5 @@
 generate:
-	buf generate ./grpc/
+	buf generate ./api/
 wire:
 	wire ./internal/product/
 	wire ./internal/counter/

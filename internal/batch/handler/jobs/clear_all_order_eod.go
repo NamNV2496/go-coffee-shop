@@ -33,7 +33,9 @@ func NewExecuteClearAllOrderEOD(
 
 func (j clearAllOrderEOD) Run(ctx context.Context) error {
 	fmt.Println("Trigger clearAllOrderEOD")
-	j.batchService.GenerateReport(ctx)
+	if err := j.batchService.GenerateReport(ctx); err != nil {
+		return err
+	}
 	return j.batchService.ClearAllOrderEOD(ctx)
 }
 
