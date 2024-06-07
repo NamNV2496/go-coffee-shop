@@ -97,7 +97,7 @@
         async function fetchUserData() {
             console.log("get data");
             const userId = document.getElementById('userId').value;
-            const response = await fetch(`http://localhost:8083/api/v1/getUser?userId=${userId}`, {
+            const response = await fetch(`http://localhost:8083/api/v1/user?userId=${userId}`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`

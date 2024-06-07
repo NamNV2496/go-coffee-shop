@@ -61,7 +61,7 @@ func routing(app *app.App, r *gin.Engine, ctx context.Context) {
 	adminMemberRoutes.Use(security.JWTAuthWithRole([]string{"admin", "counter", "kitchen"}))
 	adminMemberRoutes.GET("", func(req *gin.Context) { app.Ping(ctx, req) })
 
-	adminMemberRoutes = r.Group("/api/v1/getUser")
+	adminMemberRoutes = r.Group("/api/v1/user")
 	adminMemberRoutes.Use(security.JWTAuthWithRole([]string{"admin"}))
 
 	/* Check role:

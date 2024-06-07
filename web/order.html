@@ -44,9 +44,16 @@
             <h1>Search Items</h1>
             <form id="searchForm">
                 <label for="id">ID:</label>
-                <input type="text" id="id" name="id">
+                <input type="number" id="id" name="id">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name">
+                <label for="itemType">Item type:</label>
+                <select id="itemType" name="itemType">
+                    <option value="0">None</option>
+                    <option value="1">Caffe</option>
+                    <option value="2">Tea</option>
+                    <option value="3">Cake</option>
+                </select>
                 <button type="button" onclick="searchItems()">Search</button>
             </form>
             
@@ -69,10 +76,12 @@
                 async function searchItems() {
                     const id = document.getElementById('id').value;
                     const name = document.getElementById('name').value;
+                    const itemType = document.getElementById('itemType').value;
 
-                    const url = new URL('http://localhost:8081/api/v1/getItems');
+                    const url = new URL('http://localhost:8081/api/v1/items');
                     if (id) url.searchParams.append('id', id);
                     if (name) url.searchParams.append('name', name);
+                    if (itemType) url.searchParams.append('itemType', itemType);
 
                     try {
                         const response = await fetch(url, {

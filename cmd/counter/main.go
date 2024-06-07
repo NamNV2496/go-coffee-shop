@@ -65,14 +65,14 @@ func routing(app *app.App, r *gin.Engine, ctx context.Context) {
 	// create order and save to cache
 	counterRoutes := r.Group("/api/v1")
 	counterRoutes.Use(security.JWTAuthWithRole([]string{"counter", "admin"}))
-	counterRoutes.POST("/createOrder", func(req *gin.Context) { app.CreateOrder(ctx, req) })
+	counterRoutes.POST("/order", func(req *gin.Context) { app.CreateOrder(ctx, req) })
 	// get item by id or name
-	counterRoutes.GET("/getItems", func(req *gin.Context) { app.GetItem(ctx, req) })
+	counterRoutes.GET("/items", func(req *gin.Context) { app.GetItem(ctx, req) })
 	// submit order to get data in cache and save it to DB
 	counterRoutes.POST("/submitOrder", func(req *gin.Context) { app.SubmitOrder(ctx, req) })
 	// view order by orderId or customerId
-	memberRoutes := r.Group("/api/v1/getSuccessOrders")
-	memberRoutes.Use(security.JWTAuthWithRole([]string{"counter", "admin"}))
+	memberRoutes := r.Group("/api/v1/successOrders")
+	// memberRoutes.Use(security.JWTAuthWithRole([]string{"counter", "admin"}))
 	memberRoutes.GET("", func(req *gin.Context) { app.GetOrders(ctx, req) })
 
 	// update status of order (only for cancel)

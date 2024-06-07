@@ -11,7 +11,7 @@ This is a small demo of a coffee shop application for practicing Golang code and
         5. run product-service `make run-product`
         6. run authorization-service `make run-authorization`
         7. run batch-service `make run-batch`
-        8. run html code in: ./web/
+        8. run html code in: ./web/ (cmd: `start index.html`)
         
 This is demo
 ![alt text](docs/3_1.png)
@@ -38,6 +38,10 @@ This is demo
 Project structure
 
         1. authorization-service: for login/register authen, author
+        Accounts and passwords is:
+            - admin: admin
+            - counter: counter
+            - kitchen: kitchen
         2. counter-service: for receptionist to make order, find items and payment
         3. kitchen-service: kitchen process (in here I made it easily to view order and update finished order)
         4. product-service: manage all product of coffee store
@@ -45,6 +49,10 @@ Project structure
         6. FE: html code to demostration how does APIs work?
 
 ```bash
+├───api
+│   └───grpcpb
+│       ├───gen
+│       └───swagger
 ├───cmd
 │   ├───authorization
 │   ├───batch
@@ -54,10 +62,6 @@ Project structure
 ├───config
 ├───deployments
 ├───docs
-├───grpc
-│   └───grpcpb
-│       ├───gen
-│       └───swagger
 ├───internal
 │   ├───authorization
 │   │   ├───app
@@ -86,8 +90,9 @@ Project structure
 │   └───product
 │       ├───app
 │       ├───domain
+│       ├───handler
+│       │   └───router
 │       ├───repo
-│       ├───router
 │       └───service
 ├───pkg
 │   ├───cache

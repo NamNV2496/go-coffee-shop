@@ -30,11 +30,11 @@ func Initialize(grpcServer *grpc.Server, filePath configs.ConfigFilePath) (*app.
 	}
 	goquDatabase := database.InitializeGoquDB(db)
 	itemRepo := repo.NewItemRepo(goquDatabase)
+	productServiceServer := router.NewHandler(itemRepo)
+	productServer := router.NewGrpcRouterServer(config, grpcServer, productServiceServer)
 	configsS3 := config.S3
 	s3Client := s3.NewS3Client(configsS3)
 	productService := service.NewProductService(itemRepo, s3Client)
-	productServiceServer := router.NewHandler(productService)
-	productServer := router.NewGrpcRouterServer(config, grpcServer, productServiceServer)
 	appApp := app.NewApp(productServer, productService)
 	return appApp, func() {
 		cleanup()

@@ -68,7 +68,8 @@ func (s productService) AddNewProduct(
 	// save to DB
 	id, err := s.itemRepo.AddNewProduct(ctx, item, fileName)
 	if err != nil {
-		panic("Fail to save to DB")
+		fmt.Println("Fail to save to DB")
+		return int32(0), err
 	}
 	// save to MinIO
 	_, err = s.s3client.Write(
@@ -80,7 +81,8 @@ func (s productService) AddNewProduct(
 		contentType,
 	)
 	if err != nil {
-		panic("Fail to upload to minio")
+		fmt.Println("Fail to upload to minio")
+		return int32(0), err
 	}
 	return id, nil
 }

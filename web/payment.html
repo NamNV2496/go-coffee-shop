@@ -94,10 +94,10 @@
             let url = "";
             let getAll = false;
             if (id){
-                url = new URL('http://localhost:8082/api/v1/getOrdersByCustomerId');
+                url = new URL('http://localhost:8082/api/v1/ordersByCustomerId');
                 url.searchParams.append('customerId', id);
             } else {
-                url = new URL('http://localhost:8082/api/v1/getOrders');
+                url = new URL('http://localhost:8082/api/v1/orders');
                 getAll = true
             }
 

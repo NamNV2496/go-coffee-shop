@@ -7,7 +7,7 @@ import (
 	grpcpb "github.com/namnv2496/go-coffee-shop-demo/api/grpcpb/gen"
 
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/domain"
-	"github.com/namnv2496/go-coffee-shop-demo/internal/product/service"
+	"github.com/namnv2496/go-coffee-shop-demo/internal/product/repo"
 )
 
 type Handler interface {
@@ -15,15 +15,15 @@ type Handler interface {
 }
 type handler struct {
 	grpcpb.UnimplementedProductServiceServer
-	itemService service.ProductService
+	itemRepo repo.ItemRepo
 }
 
 func NewHandler(
-	itemService service.ProductService,
+	itemRepo repo.ItemRepo,
 ) grpcpb.ProductServiceServer {
 
 	return &handler{
-		itemService: itemService,
+		itemRepo: itemRepo,
 	}
 }
 
@@ -32,27 +32,31 @@ func (s handler) GetProducts(
 	request *grpcpb.GetProductsRequest,
 ) (*grpcpb.GetProductsResponse, error) {
 
-	var page = request.Page
-	var size = request.Size
+	page := request.Page
+	size := request.Size
+	itemType := request.ItemType
 
 	var itemList []domain.Item
 	var err error
-	if request.Id != 0 || request.Name != "" {
-		itemList, err = s.itemService.GetItemByIdOrName(context.Background(), request.Id, request.Name, page, size)
+	if itemType == 0 && request.Id == 0 && request.Name == "" {
+		itemList, err = s.itemRepo.GetAll(context.Background(), page, size)
+	} else if itemType == 0 && (request.Id != 0 || request.Name != "") {
+		itemList, err = s.itemRepo.GetByIdOrName(context.Background(), request.Id, request.Name, page, size)
 	} else {
-		itemList, err = s.itemService.GetAllItems(context.Background(), page, size)
+		itemList, err = s.itemRepo.GetByIdOrNameOrType(context.Background(), request.Id, request.Name, int32(itemType), page, size)
 	}
 	if err != nil {
-		panic("Error when get items: " + string(err.Error()))
+		fmt.Println("Error when get items: " + string(err.Error()))
+		return &grpcpb.GetProductsResponse{}, err
 	}
-	fmt.Println(itemList)
+
 	items := make([]*grpcpb.Item, 0)
 	for _, item := range itemList {
 		items = append(items, &grpcpb.Item{
 			Id:    item.Id,
 			Name:  item.Name,
 			Price: item.Price,
-			Type:  item.Type,
+			Type:  grpcpb.ItemType(item.Type),
 			Image: item.Img,
 		})
 	}

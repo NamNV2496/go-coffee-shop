@@ -48,14 +48,27 @@
             "type": "string"
           },
           {
-            "name": "page",
+            "name": "ItemType",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "enum": [
+              "DEFAULT",
+              "CAFFE",
+              "TEA",
+              "CAKE"
+            ],
+            "default": "DEFAULT"
+          },
+          {
+            "name": "Page",
             "in": "query",
             "required": false,
             "type": "integer",
             "format": "int32"
           },
           {
-            "name": "size",
+            "name": "Size",
             "in": "query",
             "required": false,
             "type": "integer",
@@ -96,13 +109,22 @@
           "format": "int32"
         },
         "Type": {
-          "type": "integer",
-          "format": "int32"
+          "$ref": "#/definitions/grpcItemType"
         },
         "Image": {
           "type": "string"
         }
       }
+    },
+    "grpcItemType": {
+      "type": "string",
+      "enum": [
+        "DEFAULT",
+        "CAFFE",
+        "TEA",
+        "CAKE"
+      ],
+      "default": "DEFAULT"
     },
     "protobufAny": {
       "type": "object",

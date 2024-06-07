@@ -1,5 +1,6 @@
 generate:
 	buf generate ./api/
+	go generate ./...
 wire:
 	wire ./internal/product/
 	wire ./internal/counter/
@@ -21,3 +22,9 @@ docker:
 	docker-compose up
 lint:
 	golangci-lint run
+
+coverage:
+	go test ./... --coverprofile=./coverprofile
+
+show-coverage:
+	go tool cover -html=./coverprofile

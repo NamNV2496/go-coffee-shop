@@ -10,6 +10,7 @@ import (
 	"github.com/namnv2496/go-coffee-shop-demo/pkg/configs"
 )
 
+//go:generate mockgen -source=$GOFILE -destination=$GOFILE.mock.go -package=$GOPACKAGE
 type S3Client interface {
 	Write(ctx context.Context, fileName string, bucket string, img multipart.File, size int64, contentType string) (int64, error)
 	PreviewImage(ctx context.Context, filename string, bucketName string) (string, error)
@@ -31,7 +32,7 @@ func NewS3Client(
 	if exist, err := minioClient.BucketExists(BUCKETNAME); err != nil && exist {
 		return nil
 	} else {
-		if err = minioClient.MakeBucket(BUCKETNAME, LOCATION); err != nil {
+		if err = minioClient.MakeBucket(BUCKETNAME, ""); err != nil {
 			return nil
 		}
 	}

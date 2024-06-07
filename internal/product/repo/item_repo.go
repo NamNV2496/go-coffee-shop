@@ -2,6 +2,8 @@ package repo
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	"github.com/doug-martin/goqu/v9"
 	"github.com/namnv2496/go-coffee-shop-demo/internal/product/domain"
@@ -9,9 +11,11 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+//go:generate mockgen -source=$GOFILE -destination=$GOFILE.mock.go -package=$GOPACKAGE
 type ItemRepo interface {
 	GetAll(ctx context.Context, offset int32, limit int32) ([]domain.Item, error)
 	GetByIdOrName(ctx context.Context, id int32, name string, offset int32, limit int32) ([]domain.Item, error)
+	GetByIdOrNameOrType(ctx context.Context, id int32, name string, itemType int32, offset int32, limit int32) ([]domain.Item, error)
 	AddNewProduct(ctx context.Context, item domain.Item, img string) (int32, error)
 }
 
@@ -63,7 +67,7 @@ func (itemRepo *itemRepo) GetByIdOrName(
 		conditions = append(conditions, goqu.C(domain.ColId).Eq(id))
 	}
 	if name != "" {
-		conditions = append(conditions, goqu.C(domain.ColName).Like("%"+name+"%"))
+		conditions = append(conditions, goqu.L("LOWER(?)", goqu.C(domain.ColName).Like("%"+strings.ToLower(name)+"%")))
 	}
 	query := itemRepo.database.
 		From(domain.TabNameItem).
@@ -71,6 +75,41 @@ func (itemRepo *itemRepo) GetByIdOrName(
 		Offset(uint(offset) * uint(limit)).
 		Limit(uint(limit))
 
+	itemList := make([]domain.Item, 0)
+	err := query.Executor().ScanStructsContext(ctx, &itemList)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+	return itemList, nil
+}
+
+func (itemRepo *itemRepo) GetByIdOrNameOrType(
+	ctx context.Context,
+	id int32,
+	name string,
+	itemType int32,
+	offset int32,
+	limit int32,
+) ([]domain.Item, error) {
+
+	// Build the conditions dynamically
+	var conditions []goqu.Expression
+	if id != 0 {
+		conditions = append(conditions, goqu.C(domain.ColId).Eq(id))
+	}
+	if name != "" {
+		conditions = append(conditions, goqu.L("LOWER(?)", goqu.C(domain.ColName).Like("%"+strings.ToLower(name)+"%")))
+	}
+
+	query := itemRepo.database.
+		From(domain.TabNameItem).
+		Where(
+			goqu.Or(conditions...),
+			goqu.And(goqu.C(domain.ColType).Eq(itemType)),
+		).
+		Offset(uint(offset) * uint(limit)).
+		Limit(uint(limit))
+	fmt.Println(query.ToSQL())
 	itemList := make([]domain.Item, 0)
 	err := query.Executor().ScanStructsContext(ctx, &itemList)
 	if err != nil {

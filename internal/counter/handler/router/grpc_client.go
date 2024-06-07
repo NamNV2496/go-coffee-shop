@@ -11,7 +11,7 @@ import (
 )
 
 type ProductGRPCClient interface {
-	GetProductByIdOrName(id int32, name string, page int32, size int32) ([]*grpcpb.Item, error)
+	GetProductByIdOrNameOrType(id int32, name string, itemType int32, page int32, size int32) ([]*grpcpb.Item, error)
 }
 
 type productGRPCClient struct {
@@ -31,9 +31,10 @@ func NewGRPCProductClient(
 	}, nil
 }
 
-func (c *productGRPCClient) GetProductByIdOrName(
+func (c *productGRPCClient) GetProductByIdOrNameOrType(
 	id int32,
 	name string,
+	itemType int32,
 	page int32,
 	size int32,
 ) ([]*grpcpb.Item, error) {
@@ -41,10 +42,11 @@ func (c *productGRPCClient) GetProductByIdOrName(
 	client := grpcpb.NewProductServiceClient(c.conn)
 
 	result, err := client.GetProducts(context.Background(), &grpcpb.GetProductsRequest{
-		Id:   id,
-		Name: name,
-		Page: 0,
-		Size: 50,
+		Id:       id,
+		Name:     name,
+		ItemType: grpcpb.ItemType(itemType),
+		Page:     0,
+		Size:     50,
 	})
 
 	if err != nil {

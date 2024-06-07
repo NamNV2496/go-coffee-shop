@@ -58,6 +58,6 @@ func rounting(ctx context.Context, app *app.App, r *gin.Engine) {
 
 	memberRoutes := r.Group("/api/v1")
 	memberRoutes.Use(security.JWTAuthWithRole([]string{"kitchen", "admin", "counter"}))
-	memberRoutes.GET("/getOrdersByCustomerId", func(req *gin.Context) { app.GetOrdersByCustomerId(ctx, req) })
-	memberRoutes.GET("/getOrders", func(req *gin.Context) { app.GetOrders(ctx, req) })
+	memberRoutes.GET("/ordersByCustomerId", func(req *gin.Context) { app.GetOrdersByCustomerId(ctx, req) })
+	memberRoutes.GET("/orders", func(req *gin.Context) { app.GetOrders(ctx, req) })
 }

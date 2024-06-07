@@ -5,6 +5,7 @@ go 1.22.2
 require (
 	github.com/google/wire v0.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.19.1
+	go.uber.org/mock v0.4.0
 	golang.org/x/crypto v0.23.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240318140521-94a12d6c2237
 	google.golang.org/grpc v1.64.0
@@ -51,6 +52,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	github.com/rogpeppe/go-internal v1.12.0 // indirect
@@ -73,6 +75,7 @@ require (
 	github.com/jung-kurt/gofpdf v1.16.2
 	github.com/minio/minio-go v6.0.14+incompatible
 	github.com/rubenv/sql-migrate v1.6.1
+	github.com/stretchr/testify v1.9.0
 	golang.org/x/net v0.25.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
 	golang.org/x/text v0.15.0 // indirect

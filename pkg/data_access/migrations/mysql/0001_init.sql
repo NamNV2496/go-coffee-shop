@@ -57,7 +57,7 @@ CREATE TABLE IF NOT exists user (
 
 INSERT INTO items (id,`name`,price,`type`, img, created_date) VALUES
 	 (1,'trà đào cam xả',50,1, "1", "2014-01-06 18:36:00"),
-	 (2,'cà phê đen',35,1, "2", "2014-01-06 18:36:00");
+	 (2,'cà phê đen',35,0, "2", "2014-01-06 18:36:00");
 
 INSERT INTO customer (id,`name`, age, loyalty_point, created_date) VALUES
 	 (1,'Nguyễn văn a', 50, 10, "2014-01-06 18:36:00"),

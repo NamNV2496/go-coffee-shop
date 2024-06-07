@@ -61,6 +61,8 @@ func (m *GetProductsRequest) validate(all bool) error {
 
 	// no validation rules for Name
 
+	// no validation rules for ItemType
+
 	// no validation rules for Page
 
 	// no validation rules for Size

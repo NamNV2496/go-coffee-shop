@@ -112,17 +112,19 @@ func (app App) GetItem(ctx context.Context, req *gin.Context) {
 	// get from parameters
 	id := req.Query("id")
 	name := req.Query("name")
+	itemType := req.Query("itemType")
+	itype, _ := strconv.Atoi(itemType)
 	num, _ := strconv.Atoi(id)
 	pageQuery := req.Query("page")
 	page, _ := strconv.Atoi(pageQuery)
 	sizeQuery := req.Query("size")
 	size, _ := strconv.Atoi(sizeQuery)
-	items, err := app.grpcClient.GetProductByIdOrName(int32(num), name, int32(page), int32(size))
+	items, err := app.grpcClient.GetProductByIdOrNameOrType(int32(num), name, int32(itype), int32(page), int32(size))
 	if err != nil {
 		utils.WrapperResponse(req, http.StatusBadRequest, err.Error())
 		return
 	}
-	utils.WrapperResponse(req, http.StatusBadRequest, items)
+	utils.WrapperResponse(req, http.StatusOK, items)
 }
 
 func (app App) GetOrders(ctx context.Context, req *gin.Context) {
