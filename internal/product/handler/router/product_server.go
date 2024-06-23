@@ -15,7 +15,6 @@ type ProductServer interface {
 }
 
 type productServer struct {
-	grpcpb.UnimplementedProductServiceServer
 	config     configs.Config
 	grpcServer *grpc.Server
 	handler    grpcpb.ProductServiceServer
